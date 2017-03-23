@@ -1,8 +1,25 @@
-# Simple Hello World Node.js sample for Google App Engine
 
-This sample demonstrates a tiny Hello World Node.js app for [Google App Engine Flexible Environment](https://cloud.google.com/appengine).
+# Socket.IO Chat
 
-## Running locally
+A simple chat demo for socket.io
 
-Refer to the [appengine/README.md](../README.md) file for instructions on
-running and deploying.
+## How to use
+
+```
+$ cd socket.io
+$ npm install
+$ cd examples/chat
+$ npm install
+$ npm start
+```
+
+And point your browser to `http://localhost:3000`. Optionally, specify
+a port by supplying the `PORT` env variable.
+
+## Features
+
+- Multiple users can join a chat room by each entering a unique username
+on website load.
+- Users can type chat messages to the chat room.
+- A notification is sent to all users when a user joins or leaves
+the chatroom.
