@@ -487,7 +487,7 @@ Rtc.prototype.sendMessage = function(message) {
 Rtc.prototype._openChannel = function(channelToken) {
 
       var tempObj = this;
-      var socket = io();
+      var socket = io("https://webrtc-singaling-dot-icrdemo-1327.appspot.com:3000");
       socket.on('connect',function(){
         tempObj.onChannelOpened.call(tempObj);
         socket.emit('addUser',{
