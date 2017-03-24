@@ -32,7 +32,7 @@ var Rtc = function() {
       this.socket = null;
 
       // My peer connection object
-      this.pc = null;
+      this.peerConnection = null;
 
       // Constraint variables
       this.pcConstraints = {
@@ -343,36 +343,16 @@ Rtc.prototype.onRemoteStreamAdded = function(event, userId) {
 Rtc.prototype.createPeerConnection = function(inRoomMsg) {
       var tempObj = this;
       var remoteUserId = inRoomMsg.userId;
-      tempObj.pc = new RTCPeerConnection(tempObj.configuration);
-      tempObj.pc.onicecandidate = (function(e) { tempObj.onIceCandidate(e); });
-      tempObj.pc.oniceconnectionstatechange = (function(event) {
-        if (tempObj.pc.iceConnectionState === "failed" ||
-            tempObj.pc.iceConnectionState === "disconnected" ||
-            tempObj.pc.iceConnectionState === "closed") {
-          if(!OverlayObject){
-            showCallHold();
-          }
-          if(window.ONLINE){
-            console.log("OTHER PEER WENT OFFLINE");
-          } else {
-            console.log("YOU WENT OFFLINE");
-          }
-        }
-      }
-      );
-      tempObj.pc.iceconnectionstatechange = (
-        function(e){
-            console.log(e);
-        }
-      );
-      tempObj.pc.addStream(tempObj.localStream);
-      tempObj.pc.onaddstream = (function(e) { tempObj.onRemoteStreamAdded(e, remoteUserId); });
+      tempObj.peerConnection = new RTCPeerConnection(tempObj.configuration);
+      tempObj.peerConnection.onicecandidate = (function(e) { tempObj.onIceCandidate(e); });
+      tempObj.peerConnection.addStream(tempObj.localStream);
+      tempObj.peerConnection.onaddstream = (function(e) { tempObj.onRemoteStreamAdded(e, remoteUserId); });
       tempObj.room.user.connections[remoteUserId] = tempObj.room.user.connections[remoteUserId] || {};
       tempObj.room.user.connections[remoteUserId].firstName = inRoomMsg.firstName;
       tempObj.room.user.connections[remoteUserId].lastName = inRoomMsg.lastName;
       tempObj.room.user.connections[remoteUserId].email = inRoomMsg.email;
       tempObj.room.user.connections[remoteUserId].connected = false;
-      tempObj.room.user.connections[remoteUserId].peerConnection = tempObj.pc;
+      tempObj.room.user.connections[remoteUserId].peerConnection = tempObj.peerConnection;
       tempObj.room.user.connections[remoteUserId].makeCall = false;
       var audios = tempObj.localStream.getAudioTracks();
       var videos = tempObj.localStream.getVideoTracks();
@@ -519,9 +499,7 @@ Rtc.prototype._openChannel = function(channelToken) {
         });
       });
       socket.close = function(){
-        socket.emit('disconnect',{
-          userId: tempObj.room.user.userId
-        });
+        //
       }
       tempObj.socket = socket;
 };
@@ -886,15 +864,15 @@ Rtc.prototype.handleMessage = function(tempMsg) {
                   }
             });
             document.dispatchEvent(afterReceivingAnswer);
-            OverlayObject.hideOverlay();
+            window.OverlayObject && OverlayObject.hideOverlay();
 
             break;
             case "candidate":
-                  var candidate = new RTCIceCandidate({
-                        sdpMLineIndex : tempMsg.label,
-                        candidate : tempMsg.candidate
-                  });
-                  tempObj.room.user.connections[tempMsg.userId].peerConnection.addIceCandidate(candidate);
+              var candidate = new RTCIceCandidate({
+                    sdpMLineIndex : tempMsg.label,
+                    candidate : tempMsg.candidate
+              });
+              tempObj.room.user.connections[tempMsg.userId].peerConnection.addIceCandidate(candidate);
             break;
             case "audioToggle":
 
@@ -1026,7 +1004,7 @@ Rtc.prototype.handleMessage = function(tempMsg) {
 Rtc.prototype.dataChannelCalls = function(pc, remoteUserId) {
       var tempObj = this;
       var channelName = tempObj.room.user.userId + "," + remoteUserId;
-      tempObj.dataChannel[remoteUserId] = tempObj.pc.createDataChannel("textMessages", tempObj.dataChannelOptions);
+      tempObj.dataChannel[remoteUserId] = tempObj.peerConnection.createDataChannel("textMessages", tempObj.dataChannelOptions);
       tempObj.createDataChannelHandlers(tempObj.dataChannel[remoteUserId]);
 };
 
@@ -1180,7 +1158,7 @@ Rtc.prototype.closeConnection = function(isAsync) {
             userId: tempObj.room.user.userId,
             isHost: tempObj.room.user.host,
             isAgent: tempObj.room.user.agent,
-            sendTo: tempObj.hostId
+            sendTo: tempObj.room.user.isBusyWith
       });
 
       tempObj.socket.close();
@@ -1248,7 +1226,8 @@ Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
           type: "bye",
           userId: tempObj.room.user.userId,
           isHost: tempObj.room.user.host,
-          isAgent: tempObj.room.user.agent
+          isAgent: tempObj.room.user.agent,
+          sendTo: tempObj.room.user.isBusyWith
         });
       }
 
