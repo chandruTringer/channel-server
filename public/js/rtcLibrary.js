@@ -499,7 +499,7 @@ Rtc.prototype._openChannel = function(channelToken) {
         });
       });
       socket.close = function(){
-        //
+        tempObj.socket = null;
       }
       tempObj.socket = socket;
 };
