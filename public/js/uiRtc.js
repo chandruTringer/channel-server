@@ -1,3 +1,4 @@
+window.candidateCount = 0;
 window.addEventListener('load', function(e) {
   window.addEventListener('online',  updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);

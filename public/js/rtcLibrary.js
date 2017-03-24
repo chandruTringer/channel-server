@@ -424,15 +424,23 @@ Rtc.prototype.setLocalAndSendMessage = function(sessionDescription, userId, remo
             firstName: tempObj.room.user.firstName,
             lastname: tempObj.room.user.lastName,
             email: tempObj.room.user.email,
-            userId: tempObj.room.user.userId
+            userId: userId
       });
 };
 
 Rtc.prototype.setRemote = function(message, remoteUserId) {
       var tempObj = this;
-      tempObj.room.user.connections[remoteUserId].peerConnection.setRemoteDescription(new RTCSessionDescription(message),
-      (function(e) { tempObj.pushIceCandidates(remoteUserId); tempObj.currentConnections = tempObj.currentConnections + 1; tempObj.trace("Client", "Message", ("Remote session description successfully set for user:" + remoteUserId)); }),
-      (function(e) { tempObj.trace("Client", "Error", ("Setting remote description failed for user: " + remoteUserId)); })    );
+      tempObj.room.user.connections[remoteUserId].peerConnection.setRemoteDescription(
+        new RTCSessionDescription(message),
+        (function(e) {
+          tempObj.pushIceCandidates(remoteUserId);
+          tempObj.currentConnections = tempObj.currentConnections + 1;
+          tempObj.trace("Client", "Message", ("Remote session description successfully set for user:" + remoteUserId));
+        }),
+        (function(e) {
+          tempObj.trace("Client", "Error", ("Setting remote description failed for user: " + remoteUserId));
+        })
+      );
 };
 
 Rtc.prototype.mergeConstraints = function(cons1, cons2) {
@@ -475,7 +483,8 @@ Rtc.prototype.onIceCandidate = function(event) {
                   label : event.candidate.sdpMLineIndex,
                   id : event.candidate.sdpMid,
                   sendTo: tempObj.room.user.isBusyWith,
-                  candidate : event.candidate.candidate
+                  candidate : event.candidate.candidate,
+                  userId: tempObj.room.user.userId
             });
       } else {
       }
@@ -487,7 +496,7 @@ Rtc.prototype.onIceCandidate = function(event) {
 //sending signal to other users
 Rtc.prototype.sendMessage = function(message) {
     var tempObj = this;
-    console.log("Sent :",message);
+    console.log("Sent :", message);
     tempObj.socket.emit('sendMessage',{
       sendTo: message.sendTo,
       message: message
@@ -498,7 +507,7 @@ Rtc.prototype.sendMessage = function(message) {
 Rtc.prototype._openChannel = function(channelToken) {
 
       var tempObj = this;
-      var socket = io('https://afternoon-shore-69800.herokuapp.com');
+      var socket = io();
       socket.on('connect',function(){
         tempObj.onChannelOpened.call(tempObj);
         socket.emit('addUser',{
@@ -572,6 +581,9 @@ Rtc.prototype.onChannelOpened = function() {
 
 Rtc.prototype.onChannelMessage = function(message) {
       var tempObj = this;
+      if( message.type === "candidate" ){
+        window.candidateCount += 1
+      }
       tempObj.handleMessage(message);
       // console.log(message);
 };
@@ -878,25 +890,11 @@ Rtc.prototype.handleMessage = function(tempMsg) {
 
             break;
             case "candidate":
-            if(typeof tempObj.room.user.connections[tempMsg.userId] == 'undefined') {
-                  tempObj.room.user.connections[tempMsg.userId] = {};
-            }
-            if(typeof tempObj.room.user.connections[tempMsg.userId].answered == 'undefined') {
-                  tempObj.room.user.connections[tempMsg.userId].answered = false;
-            }
-            if((tempObj.room.user.connections[tempMsg.userId].peerConnection) && (tempObj.room.user.connections[tempMsg.userId].answered === true)) {
                   var candidate = new RTCIceCandidate({
                         sdpMLineIndex : tempMsg.label,
                         candidate : tempMsg.candidate
                   });
                   tempObj.room.user.connections[tempMsg.userId].peerConnection.addIceCandidate(candidate);
-            } else {
-                  if(!tempObj.room.user.connections[tempMsg.userId].candidatesReceived) {
-                        tempObj.room.user.connections[tempMsg.userId].candidatesReceived = [];
-                  }
-                  tempObj.room.user.connections[tempMsg.userId].candidatesReceived.push(tempMsg);
-            }
-
             break;
             case "audioToggle":
 
