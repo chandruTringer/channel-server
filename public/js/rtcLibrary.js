@@ -306,7 +306,7 @@ Rtc.prototype.activateUserMedia = function() {
           // Other activities
           this.localStream = stream;
           this.mediaReady = true;
-          tempObj._openChannel(tempObj.room.user.userId);
+          tempObj._openChannel(tempObj.room.user.channelToken);
         }).bind(this))
         .catch(function (err) {
           console.log(err);
@@ -488,11 +488,12 @@ Rtc.prototype._openChannel = function(channelToken) {
 
       var tempObj = this;
       var socket = io();
-      socket.on('connect',function(){
+      socket.on('connect', function(){
         tempObj.onChannelOpened.call(tempObj);
         socket.emit('addUser',{
           userId: tempObj.room.user.userId,
-          socketId: socket.id
+          socketId: socket.id,
+          channelToken: channelToken
         });
         socket.on('message', function(message){
           tempObj.onChannelMessage.call(tempObj,message);

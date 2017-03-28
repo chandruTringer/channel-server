@@ -20,11 +20,16 @@ const userSchema = mongoose.Schema({
   channelToken: {
     type: String,
     required: true
+  },
+  socketId: {
+    type: String
   }
 },
 {
   versionKey: false // You should be aware of the outcome after set to false
 });
+
+// Static methods that aids in workflow
 
 userSchema.statics.findUserByUserId = function(userId, callback){
   console.log(this);
@@ -34,6 +39,10 @@ userSchema.statics.findUserByUserId = function(userId, callback){
 userSchema.statics.removeUserByuserId = function(userId, callback){
   return this.remove({userId: userId}, callback);
 };
+
+userSchema.static.updateUser = function(userId, updatedConent, options, callback){
+  return this.findOneAndUpdate({userId: userId}, updatedConent, options, callback);
+}
 
 const User = module.exports = mongoose.model("User", userSchema);
 
