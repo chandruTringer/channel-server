@@ -6,8 +6,8 @@ var express = require('express');
 var socketIO = require('socket.io');
 var app = express();
 var options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
 };
 var server = https.createServer(options, app);
 var io = socketIO(server);
