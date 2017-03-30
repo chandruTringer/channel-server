@@ -40,7 +40,7 @@ userSchema.statics.removeUserByuserId = function(userId, callback){
   return this.remove({userId: userId}, callback);
 };
 
-userSchema.static.updateUser = function(userId, updatedContent, options, callback){
+userSchema.statics.updateUser = function(userId, updatedContent, options, callback){
   return this.findOneAndUpdate({userId: userId}, updatedContent, options, callback);
 }
 

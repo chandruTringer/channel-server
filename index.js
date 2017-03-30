@@ -13,7 +13,7 @@ var EMPTY_VALUE = "@EMPTY_VALUE";
 
 // Connecting to mongodb
 
-mongoose.connect('mongodb://localhost/users');
+mongoose.connect('mongodb://afternoon-shore-69800/users');
 
 var port = process.env.PORT || 3000;
 
@@ -55,7 +55,7 @@ io.on('connection', function (socket) {
             channelToken: channelToken,
             socketId: socketId
           }
-          User.updateUser(_query,_update)
+          User.updateUser(_query,_updatedContent)
         } else {
           // Error
           // Throw Unauthorized user error
