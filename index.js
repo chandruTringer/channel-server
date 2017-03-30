@@ -55,7 +55,7 @@ io.on('connection', function (socket) {
             channelToken: channelToken,
             socketId: socketId
           }
-          User.updateUser(userId,_updatedContent)
+          User.updateUser(_query,_update)
         } else {
           // Error
           // Throw Unauthorized user error
@@ -67,16 +67,16 @@ io.on('connection', function (socket) {
     }
   });
   socket.on('disconnect', function(data) {
-    delete usersOnBoard[data.userId];
+    // delete usersOnBoard[data.userId];
   });
   socket.on('sendMessage', function(data){
-    var sendTo = usersOnBoard[data.sendTo];
-    var message = data.message;
-    if(sendTo){
-      console.log(sendTo);
-      socket.broadcast.to(sendTo).emit('message', message);
-    } else {
-      console.log("Unknow user id");
-    }
+    // var sendTo = usersOnBoard[data.sendTo];
+    // var message = data.message;
+    // if(sendTo){
+    //   console.log(sendTo);
+    //   socket.broadcast.to(sendTo).emit('message', message);
+    // } else {
+    //   console.log("Unknow user id");
+    // }
   });
 });

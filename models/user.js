@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Create a token generator with the default settings:
 const generateToken = require('rand-token');
@@ -10,7 +10,7 @@ const createToken = () => generateToken.generate(20);
 const addChannelToken = function(user){
   user = Object.assign({channelToken: createToken()},user);
   return user;
-}
+};
 
 const userSchema = mongoose.Schema({
   userId: {
@@ -40,28 +40,24 @@ userSchema.statics.removeUserByuserId = function(userId, callback){
   return this.remove({userId: userId}, callback);
 };
 
-userSchema.static.updateUser = function(userId, updatedConent, options, callback){
-  return this.findOneAndUpdate({userId: userId}, updatedConent, options, callback);
+userSchema.static.updateUser = function(userId, updatedContent, options, callback){
+  return this.findOneAndUpdate({userId: userId}, updatedContent, options, callback);
 }
 
 const User = module.exports = mongoose.model("User", userSchema);
 
+
 const addUser = (user, callback) => {
-  User.findUserByUserId(user.userId, function(err, users){
-    if(err){
-      throw err;
-    }
-    if(users){
-      User.removeUserByuserId(user.userId,function(err, successResponse){
-        if(err){
-          throw err;
-        }
-        User.create(addChannelToken(user), callback);
-      });
-    } else {
-      User.create(addChannelToken(user), callback);
-    }
-  });
+    User.findUserByUserId(user.userId, function(err, users){
+      if(err) throw err;
+      if(users){
+        User.removeUserByuserId(user.userId, function(err, users){
+          User.create(addChannelToken(user),callback);
+        });
+      } else {
+        User.create(addChannelToken(user),callback);
+      }
+    });
 };
 
 module.exports.addUser = addUser;

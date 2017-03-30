@@ -487,7 +487,7 @@ Rtc.prototype.sendMessage = function(message) {
 Rtc.prototype._openChannel = function(channelToken) {
 
       var tempObj = this;
-      var socket = io();
+      var socket = io('/');
       socket.on('connect', function(){
         tempObj.onChannelOpened.call(tempObj);
         socket.emit('addUser',{

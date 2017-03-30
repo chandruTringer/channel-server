@@ -1,7 +1,7 @@
 
-# Socket.IO Chat
+# Socket.IO as Signaling server
 
-A simple chat demo for socket.io
+A simple webrtc customer service care app using socket.io
 
 ## How to use
 
@@ -18,8 +18,6 @@ a port by supplying the `PORT` env variable.
 
 ## Features
 
-- Multiple users can join a chat room by each entering a unique username
-on website load.
-- Users can type chat messages to the chat room.
-- A notification is sent to all users when a user joins or leaves
-the chatroom.
+- Customers can connect with the registred agents.
+- Each and every agent will be registred with the portal along with their skills.
+- Customers can talk to the agents regarding the problems they are facing.
