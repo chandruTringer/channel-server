@@ -4,7 +4,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var User = require('./models/user.js');
 var app = express();
-var server = require('http').Server(app);
+var server = require('https').Server(app);
 var io = require('socket.io')(server);
 
 // Constant values which are all used globally in other locations
@@ -13,7 +13,7 @@ var EMPTY_VALUE = "@EMPTY_VALUE";
 
 // Connecting to mongodb
 
-mongoose.connect('mongodb://afternoon-shore-69800/users');
+mongoose.connect('mongodb://localhost/users');
 
 var port = process.env.PORT || 3000;
 
@@ -54,13 +54,17 @@ io.on('connection', function (socket) {
             userId: userId,
             channelToken: channelToken,
             socketId: socketId
-          }
-          User.updateUser(_query,_updatedContent)
+          };
+          console.log(_updatedContent);
+          User.updateUser(_query,_updatedContent,{},function(err, successResponse){
+            if(err) throw err;
+            console.log("successResponse", successResponse);
+          });
         } else {
           // Error
           // Throw Unauthorized user error
         }
-      })
+      });
 
     } else {
       // Error unable to add user
@@ -70,13 +74,16 @@ io.on('connection', function (socket) {
     // delete usersOnBoard[data.userId];
   });
   socket.on('sendMessage', function(data){
-    // var sendTo = usersOnBoard[data.sendTo];
-    // var message = data.message;
-    // if(sendTo){
-    //   console.log(sendTo);
-    //   socket.broadcast.to(sendTo).emit('message', message);
-    // } else {
-    //   console.log("Unknow user id");
-    // }
+    User.findUserByUserId(data.sendTo, function(user){
+      console.log(user[0].sessionId);
+      var sendTo = user[0].sessionId;
+      var message = data.message;
+      if(sendTo){
+        console.log(sendTo);
+        socket.broadcast.to(sendTo).emit('message', message);
+      } else {
+        console.log("Unknow user id");
+      }
+    })
   });
 });

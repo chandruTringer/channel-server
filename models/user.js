@@ -6,9 +6,11 @@ const generateToken = require('rand-token');
 // Generate a 16 character alpha-numeric token:
 const createToken = () => generateToken.generate(20);
 
+var EMPTY_VALUE = "@EMPTY_VALUE";
+
 // Add channel token
 const addChannelToken = function(user){
-  user = Object.assign({channelToken: createToken()},user);
+  user = Object.assign({channelToken: createToken(), socketId: EMPTY_VALUE},user);
   return user;
 };
 
@@ -22,7 +24,8 @@ const userSchema = mongoose.Schema({
     required: true
   },
   socketId: {
-    type: String
+    type: String,
+    required: true
   }
 },
 {
@@ -32,15 +35,17 @@ const userSchema = mongoose.Schema({
 // Static methods that aids in workflow
 
 userSchema.statics.findUserByUserId = function(userId, callback){
-  console.log(this);
+  console.log("findUserByUserId");
   return this.find({userId: userId}, callback);
 };
 
 userSchema.statics.removeUserByuserId = function(userId, callback){
+  console.log("removeUserByuserId");
   return this.remove({userId: userId}, callback);
 };
 
 userSchema.statics.updateUser = function(userId, updatedContent, options, callback){
+  console.log("updateUser");
   return this.findOneAndUpdate({userId: userId}, updatedContent, options, callback);
 }
 
@@ -50,11 +55,13 @@ const User = module.exports = mongoose.model("User", userSchema);
 const addUser = (user, callback) => {
     User.findUserByUserId(user.userId, function(err, users){
       if(err) throw err;
-      if(users){
+      if(users.length > 0){
+        console.log("UserId Already Exists", users);
         User.removeUserByuserId(user.userId, function(err, users){
           User.create(addChannelToken(user),callback);
         });
       } else {
+        console.log("New UserId");
         User.create(addChannelToken(user),callback);
       }
     });
