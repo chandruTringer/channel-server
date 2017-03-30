@@ -13,7 +13,7 @@ var EMPTY_VALUE = "@EMPTY_VALUE";
 
 // Connecting to mongodb
 
-mongoose.connect('mongodb://localhost/users');
+// mongoose.connect('mongodb://localhost/users');
 
 var port = process.env.PORT || 3000;
 
