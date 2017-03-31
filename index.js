@@ -1,3 +1,12 @@
+// Authentication module.
+var auth = require('http-auth');
+// var express = require('express');
+var basic = auth.basic({
+	realm: "Simon Area.",
+	file: __dirname + "/htpasswd"
+});
+
+
 // Setup basic express server
 
 var fs = require('fs');
@@ -9,11 +18,13 @@ var options = {
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.crt')
 };
+// Application setup.
+var app = express();
+app.use(auth.connect(basic));
 var server = https.createServer(options, app);
 var io = socketIO(server);
-console.log(process.env.PORT);
-var port = 443;
 
+var port = 443;
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
