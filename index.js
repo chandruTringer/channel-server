@@ -11,7 +11,8 @@ var options = {
 };
 var server = https.createServer(options, app);
 var io = socketIO(server);
-var port = process.env.PORT || 8443;
+console.log(process.env.PORT);
+var port = 443;
 
 
 server.listen(port, function () {
