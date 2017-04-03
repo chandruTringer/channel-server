@@ -41,10 +41,6 @@ io.on('connection', function (socket) {
     usersOnBoard[data.userId] = data.socketId;
     console.log(usersOnBoard);
   });
-  socket.on('disconnect', function(data) {
-    console.log(usersOnBoard[data.userId]);
-    delete usersOnBoard[data.userId];
-  });
   socket.on('sendMessage', function(data){
     console.log(data);
     var sendTo = usersOnBoard[data.sendTo];
@@ -55,5 +51,13 @@ io.on('connection', function (socket) {
     } else {
       console.log("Unknow user id");
     }
+		socket.on('disconnect', function(data) {
+			console.log(usersOnBoard[data.userId]);
+			delete usersOnBoard[data.userId];
+		});
+		socket.on('error', function (err) {
+			console.log("Socket.IO Error");
+			console.log(err.stack);
+		});
   });
 });
