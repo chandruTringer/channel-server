@@ -104,7 +104,8 @@ io.on('connection', function (socket) {
     // delete usersOnBoard[data.userId];
   });
   socket.on('sendMessage', function(data){
-    User.findUserByUserId(data.sendTo, function(user){
+    User.findUserByUserId(data.sendTo, function(err, user){
+      if(err) throw err;
       console.log(user[0].sessionId);
       var sendTo = user[0].sessionId;
       var message = data.message;
