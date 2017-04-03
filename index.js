@@ -1,25 +1,55 @@
 // Setup basic express server
 
+// Authentication module.
+var auth = require('http-auth');
+// var express = require('express');
+var basic = auth.basic({
+	realm: "Simon Area.",
+	file: __dirname + "/htpasswd"
+});
+
+
+// Setup basic express server
+
+var fs = require('fs');
+var https = require('https');
 var express = require('express');
-var mongoose = require('mongoose');
-var User = require('./models/user.js');
+var socketIO = require('socket.io');
 var app = express();
-var server = require('https').Server(app);
-var io = require('socket.io')(server);
+var options = {
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
+};
+// Application setup.
+var app = express();
+app.use(auth.connect(basic));
+var server = https.createServer(options, app);
+var io = socketIO(server);
 
-// Constant values which are all used globally in other locations
-
-var EMPTY_VALUE = "@EMPTY_VALUE";
-
-// Connecting to mongodb
-
-mongoose.connect('mongodb://localhost/users');
-
-var port = process.env.PORT || 3000;
+var port = 443;
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
 });
+
+
+var mongoose = require('mongoose');
+var User = require('./models/user.js');
+
+
+// Constant values which are all used globally in other locations
+
+var EMPTY_VALUE = "@EMPTY_VALUE";
+var USER = 'root';
+var PASS = 'high5';
+var HOST = '104.155.137.246';
+var PORT = '27017';
+
+var URI = `mongodb://${USER}:${PASS}@${HOST}:${PORT}`;
+
+// Connecting to mongodb
+
+var connection = mongoose.connect(`${URI}/admin`);
 
 // Routing
 app.use(express.static(__dirname + '/public'));
