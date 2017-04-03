@@ -6,9 +6,7 @@ A simple webrtc customer service care app using socket.io
 ## How to use
 
 ```
-$ cd socket.io
-$ npm install
-$ cd examples/chat
+$ cd webrtc
 $ npm install
 $ npm start
 ```

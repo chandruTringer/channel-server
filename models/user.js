@@ -3,6 +3,19 @@ const mongoose = require('mongoose');
 // Create a token generator with the default settings:
 const generateToken = require('rand-token');
 
+// Constant values which are all used globally in other locations
+
+var USER = 'root';
+var PASS = 'high5';
+var HOST = '104.155.137.246';
+var PORT = '27017';
+
+var URI = `mongodb://${USER}:${PASS}@${HOST}:${PORT}`;
+
+// Connecting to mongodb
+
+var connection = mongoose.connect(`${URI}/admin`);
+
 // Generate a 16 character alpha-numeric token:
 const createToken = () => generateToken.generate(20);
 
