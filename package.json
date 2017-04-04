@@ -1,17 +1,18 @@
 {
-  "name": "socket.io-chat",
+  "name": "ICR(Intelligent Call Router)",
   "version": "0.0.0",
   "description": "A simple webrtc customer service care app using socket.io",
   "main": "index.js",
-  "author": "Grant Timmerman",
+  "author": "Vigneshwaran Sivasamy",
   "private": true,
   "license": "BSD",
   "dependencies": {
     "express": "4.13.4",
+    "http-auth": "^3.1.3",
     "mongoose": "*",
     "rand-token": "^0.3.0",
-    "socket.io": "latest",
-    "http-auth": "^3.1.3"
+    "request": "^2.81.0",
+    "socket.io": "latest"
   },
   "scripts": {
     "start": "node index.js"

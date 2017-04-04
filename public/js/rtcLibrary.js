@@ -501,7 +501,10 @@ Rtc.prototype._openChannel = function(channelToken) {
       });
       socket.close = function(){
         tempObj.socket = null;
-      }
+        socket.emit('disconnect',{
+          userId: tempObj.room.user.userId
+        });
+      };
       tempObj.socket = socket;
 };
 
