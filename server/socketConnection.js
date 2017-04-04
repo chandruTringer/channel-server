@@ -9,9 +9,11 @@ module.exports = function (socket) {
       var userId = (data.userId) ? data.userId : EMPTY_VALUE;
       var socketId = (data.socketId) ? data.socketId : EMPTY_VALUE;
       var channelToken = (data.channelToken) ? data.channelToken : EMPTY_VALUE;
-      Request.get(APP_SERVER+CONNECTION_STATE('connected', userId))
+      var url = APP_SERVER+CONNECTION_STATE('connect', userId);
+      console.log(url);
+      Request.get(url)
         .on('response', function(response){
-          console.log("CONNECTED", response.statusCode);
+          console.log("CONNECTED");
         });
       User.findUserByUserId(userId,function(err, users){
         if(err){
@@ -27,9 +29,9 @@ module.exports = function (socket) {
           console.log(_updatedContent);
           User.updateUser(userId,_updatedContent,{},function(err, successResponse){
             if(err) throw err;
+            console.log(err);
             if(successResponse){
-              console.log("Throw entity not get updated Exception");
-              console.log("successResponse", successResponse);
+              console.log("Update User successfully");
             }
           });
         } else {
@@ -42,25 +44,32 @@ module.exports = function (socket) {
       // Error unable to add user
     }
   });
-  socket.on('disconnect', function(data) {
-    User.removeUserByuserId(data.userId, function(err, successResponse){
-      if(err) throw err;
-      if(successResponse){
-        console.log(successResponse);
-      }
-    })
-    Request.get(APP_SERVER+CONNECTION_STATE('connected', userId))
+  socket.on('removeUser', function(data,value) {
+    console.log("DATA",data);
+    var userId = (data.userId) ? data.userId : EMPTY_VALUE;
+    var url = APP_SERVER+CONNECTION_STATE('disconnect', userId);
+    console.log(url);
+    if(userId !== EMPTY_VALUE){
+      User.removeUserByUserId(userId, function(err, successResponse){
+        if(err) throw err;
+        if(successResponse){
+          // console.log(successResponse);
+          console.log("User Removed Successfully: "+userId);
+        }
+      });
+      Request.get(url)
       .on('response', function(response){
         console.log("CONNECTED", response.statusCode);
       });
+    }
   });
   socket.on('sendMessage', function(data){
+    console.log(data.message);
     User.findUserByUserId(data.sendTo, function(err, user){
       if(err) throw err;
-      if(user.lenght > 0){
-        console.log(user);
-        console.log(user[0].sessionId);
-        var sendTo = user[0].sessionId;
+      console.log("IN SEND MESSAGE USER",user[0].userId);
+      if(user.length > 0){
+        var sendTo = user[0].socketId;
         var message = data.message;
         if(sendTo){
           console.log(sendTo);

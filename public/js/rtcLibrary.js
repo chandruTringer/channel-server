@@ -500,10 +500,10 @@ Rtc.prototype._openChannel = function(channelToken) {
         });
       });
       socket.close = function(){
-        tempObj.socket = null;
-        socket.emit('disconnect',{
+        socket.emit('removeUser',{
           userId: tempObj.room.user.userId
         });
+        tempObj.socket = null;
       };
       tempObj.socket = socket;
 };

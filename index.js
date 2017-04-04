@@ -37,13 +37,15 @@ var User = require('./models/user.js');
 app.use(express.static(__dirname + '/public'));
 
 app.get('/_api/user/create/:_id', ( request, response ) => {
+	console.log(request);
   var id = request.params._id;
-  console.log(id);
   User.addUser({userId : id}, (err, successResponse) => {
     console.log(err);
 		if(err){
 			throw err;
 		}
+		console.log(successResponse);
+		console.log("CREATED: "+id);
 		response.json(successResponse);
 	});
 });

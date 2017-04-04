@@ -52,8 +52,8 @@ userSchema.statics.findUserByUserId = function(userId, callback){
   return this.find({userId: userId}, callback);
 };
 
-userSchema.statics.removeUserByuserId = function(userId, callback){
-  console.log("removeUserByuserId");
+userSchema.statics.removeUserByUserId = function(userId, callback){
+  console.log("removeUserByUserId")
   return this.remove({userId: userId}, callback);
 };
 
@@ -70,7 +70,7 @@ const addUser = (user, callback) => {
       if(err) throw err;
       if(users.length > 0){
         console.log("UserId Already Exists", users);
-        User.removeUserByuserId(user.userId, function(err, users){
+        User.removeUserByUserId(user.userId, function(err, users){
           User.create(addChannelToken(user),callback);
         });
       } else {
