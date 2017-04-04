@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var EMPTY_VALUE = "@EMPTY_VALUE";
 module.exports = function (socket) {
   socket.on('addUser', function(data) {
     if(data){
