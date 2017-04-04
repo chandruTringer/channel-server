@@ -56,6 +56,6 @@ module.exports = function (socket) {
         // Throw unknown user error
         console.log("Throw unknown user error");
       }
-    })
+    });
   });
-}
+};
