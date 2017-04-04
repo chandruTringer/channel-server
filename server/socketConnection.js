@@ -54,6 +54,7 @@ module.exports = function (socket) {
         if(err) throw err;
         if(successResponse){
           // console.log(successResponse);
+          socket.disconnect();
           console.log("User Removed Successfully: "+userId);
         }
       });
@@ -67,8 +68,8 @@ module.exports = function (socket) {
     console.log(data.message);
     User.findUserByUserId(data.sendTo, function(err, user){
       if(err) throw err;
-      console.log("IN SEND MESSAGE USER",user[0].userId);
       if(user.length > 0){
+        console.log("IN SEND MESSAGE USER",user[0].userId);
         var sendTo = user[0].socketId;
         var message = data.message;
         if(sendTo){
