@@ -1148,13 +1148,13 @@ Rtc.prototype.closeConnection = function(isAsync) {
       tempObj.localStream.getAudioTracks()[0].stop();
       tempObj.localStream.getVideoTracks()[0].stop();
       tempObj.localStream = null;
-      tempObj.sendMessage({
-            type: "bye",
-            userId: tempObj.room.user.userId,
-            isHost: tempObj.room.user.host,
-            isAgent: tempObj.room.user.agent,
-            sendTo: tempObj.room.user.isBusyWith
-      });
+      // tempObj.sendMessage({
+      //       type: "bye",
+      //       userId: tempObj.room.user.userId,
+      //       isHost: tempObj.room.user.host,
+      //       isAgent: tempObj.room.user.agent,
+      //       sendTo: tempObj.room.user.isBusyWith
+      // });
 
       tempObj.socket.close();
       if(rtc.room.user.agent || rtc.room.user.waiting){
@@ -1216,15 +1216,15 @@ Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
         tempObj.currentConnections = 1;
       }
 
-      if(!isTerminated){
-        tempObj.sendMessage({
-          type: "bye",
-          userId: tempObj.room.user.userId,
-          isHost: tempObj.room.user.host,
-          isAgent: tempObj.room.user.agent,
-          sendTo: tempObj.room.user.isBusyWith
-        });
-      }
+      // if(!isTerminated){
+      //   tempObj.sendMessage({
+      //     type: "bye",
+      //     userId: tempObj.room.user.userId,
+      //     isHost: tempObj.room.user.host,
+      //     isAgent: tempObj.room.user.agent,
+      //     sendTo: tempObj.room.user.isBusyWith
+      //   });
+      // }
 
 
       tempObj.socket.close();
