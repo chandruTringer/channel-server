@@ -71,8 +71,7 @@ app.post('/_api/user/send_message', ( request, response ) => {
 			};
 		};
 	  if(user.length > 0){
-			console.log(data.message);
-	    console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
+	    console.log("IN SEND MESSAGE API",user[0].userId, data.type);
 			var user = user[0];
 			var userId = user.userId;
 	    var sendTo = user.socketId;
