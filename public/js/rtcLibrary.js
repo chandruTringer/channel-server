@@ -413,6 +413,7 @@ Rtc.prototype.setRemote = function(message, remoteUserId) {
       tempObj.room.user.connections[remoteUserId].peerConnection.setRemoteDescription(
         new RTCSessionDescription(message),
         (function(e) {
+          console.log("SET REMOTE SUCCESS",e);
           tempObj.pushIceCandidates(remoteUserId);
           tempObj.currentConnections = tempObj.currentConnections + 1;
           tempObj.trace("Client", "Message", ("Remote session description successfully set for user:" + remoteUserId));

@@ -59,10 +59,28 @@ app.post('/_api/user/send_message', ( request, response ) => {
 
 	  if(user.length > 0){
 	    console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
-	    var sendTo = user[0].socketId;
+			var user = user[0];
+			var userId = user.userId;
+	    var sendTo = user.socketId;
 	    var message = data.message;
-	    if(sendTo){
-	      io.sockets.connected[sendTo].send(data);
+			var sockets = io.sockets;
+			var addSuccessResponse = function(obj){
+				return {
+					success: true,
+					sentTo: userId,
+					message: obj
+				};
+			};
+			var addFailureResponse = function(obj){
+				return {
+					success: false,
+					sentTo: userId,
+					message: obj
+				};
+			};
+	    if(sendTo && sockets.connected[sendTo]){
+	      sockets.connected[sendTo].send(data);
+				response.json(addSuccessResponse(data));
 	    } else {
 	      console.log("Unknow user id");
 	    }
