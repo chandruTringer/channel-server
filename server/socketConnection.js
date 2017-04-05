@@ -38,7 +38,7 @@ module.exports = function (socket) {
       console.log(url);
       Request.get(url)
         .on('response', function(response){
-          console.log("CONNECTED",reponse.statusCode);
+          console.log("CONNECTED",response.statusCode);
         });
       User.findUserByUserId(userId,function(err, users){
         if(err){
