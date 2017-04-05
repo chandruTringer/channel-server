@@ -48,17 +48,14 @@ const userSchema = mongoose.Schema({
 // Static methods that aids in workflow
 
 userSchema.statics.findUserByUserId = function(userId, callback){
-  console.log("findUserByUserId");
   return this.find({userId: userId}, callback);
 };
 
 userSchema.statics.removeUserByUserId = function(userId, callback){
-  console.log("removeUserByUserId")
   return this.remove({userId: userId}, callback);
 };
 
 userSchema.statics.updateUser = function(userId, updatedContent, options, callback){
-  console.log("updateUser");
   return this.findOneAndUpdate({userId: userId}, updatedContent, options, callback);
 }
 

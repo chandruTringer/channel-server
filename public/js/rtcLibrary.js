@@ -437,21 +437,11 @@ Rtc.prototype.mergeConstraints = function(cons1, cons2) {
 ****************************************************************************/
 Rtc.prototype.pushIceCandidates = function(userId) {
       var tempObj = this;
-      if(!tempObj.room.user.connections[userId].candidatesReceived) {
-            tempObj.room.user.connections[userId].candidatesReceived = [];
-      }
-      var lenIce = tempObj.room.user.connections[userId].candidatesReceived.length;
-      (function () {
-            var keepLen = lenIce;
-            for(var i = 0; i < keepLen; i++) {
-                  var cmsg = tempObj.room.user.connections[userId].candidatesReceived.pop();
-                  var candidate = new RTCIceCandidate({
-                        sdpMLineIndex : cmsg.label,
-                        candidate : cmsg.candidate
-                  });
-                  tempObj.room.user.connections[userId].peerConnection.addIceCandidate(candidate);
-            }
-      })();
+      var candidate = new RTCIceCandidate({
+            sdpMLineIndex : cmsg.label,
+            candidate : cmsg.candidate
+      });
+      tempObj.room.user.connections[userId].peerConnection.addIceCandidate(candidate);
       tempObj.room.user.connections[userId].answered = true;
 };
 

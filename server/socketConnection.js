@@ -26,12 +26,11 @@ module.exports = function (socket) {
             channelToken: channelToken,
             socketId: socketId
           };
-          console.log(_updatedContent);
           User.updateUser(userId,_updatedContent,{},function(err, successResponse){
             if(err) throw err;
             console.log(err);
             if(successResponse){
-              console.log("Update User successfully");
+              console.log("Update User socketId: "+_updatedContent.socketId);
             }
           });
         } else {
@@ -65,23 +64,38 @@ module.exports = function (socket) {
     }
   });
   socket.on('sendMessage', function(data){
-    console.log(data.message);
     User.findUserByUserId(data.sendTo, function(err, user){
       if(err) throw err;
       if(user.length > 0){
-        console.log("IN SEND MESSAGE USER",user[0].userId);
+        console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
         var sendTo = user[0].socketId;
         var message = data.message;
         if(sendTo){
-          console.log(sendTo);
           socket.broadcast.to(sendTo).emit('message', message);
         } else {
           console.log("Unknow user id");
         }
       } else {
-        // Throw unknown user error
         console.log("Throw unknown user error");
       }
     });
+  });
+};
+
+module.exports.sendSocketMessage = function(data){
+  User.findUserByUserId(data.sendTo, function(err, user){
+    if(err) throw err;
+    if(user.length > 0){
+      console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
+      var sendTo = user[0].socketId;
+      var message = data.message;
+      if(sendTo){
+        socket.broadcast.to(sendTo).emit('message', message);
+      } else {
+        console.log("Unknow user id");
+      }
+    } else {
+      console.log("Throw unknown user error");
+    }
   });
 };
