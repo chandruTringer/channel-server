@@ -19,7 +19,7 @@ module.exports = function (socket) {
           console.log(url);
           Request.get(url)
             .on('response', function(response){
-              console.log("CONNECTED");
+              console.log("DISCONNECTED",response.statusCode);
             });
         } else {
           console.log("Unknow user id");
@@ -38,7 +38,7 @@ module.exports = function (socket) {
       console.log(url);
       Request.get(url)
         .on('response', function(response){
-          console.log("CONNECTED");
+          console.log("CONNECTED",reponse.statusCode);
         });
       User.findUserByUserId(userId,function(err, users){
         if(err){
