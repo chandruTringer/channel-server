@@ -11,7 +11,7 @@ module.exports = function (socket) {
     User.findUserIdBySocketId(socketId, function(err, user){
       if(err) throw err;
       if(user.length > 0){
-        console.log("IN SOCKET DISCONNECTION",user[0].userId, data.message.type);
+        console.log("IN SOCKET DISCONNECTION",user[0].userId);
         user = user[0];
         var userId = user.userId;
         if(userId){
