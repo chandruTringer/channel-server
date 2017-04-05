@@ -57,6 +57,19 @@ app.post('/_api/user/send_message', ( request, response ) => {
 
 	  if(err) throw err;
 
+		var addSuccessResponse = function(obj){
+			return {
+				success: true,
+				message: obj
+			};
+		};
+		var addFailureResponse = function(obj, cause){
+			return {
+				success: false,
+				message: obj,
+				cause: cause
+			};
+		};
 	  if(user.length > 0){
 	    console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
 			var user = user[0];
@@ -64,30 +77,16 @@ app.post('/_api/user/send_message', ( request, response ) => {
 	    var sendTo = user.socketId;
 	    var message = data.message;
 			var sockets = io.sockets;
-			var addSuccessResponse = function(obj){
-				return {
-					success: true,
-					sentTo: userId,
-					message: obj
-				};
-			};
-			var addFailureResponse = function(obj){
-				return {
-					success: false,
-					sentTo: userId,
-					message: obj
-				};
-			};
 	    if(sendTo && sockets.connected[sendTo]){
 	      sockets.connected[sendTo].send(data);
 				response.json(addSuccessResponse(data));
 	    } else {
-	      console.log("Unknow user id");
-				response.json(addFailureResponse(data));
+	      console.log("Currently user not in connection");
+				response.json(addFailureResponse(data, "Currently user not in connection"));
 	    }
 	  } else {
       console.log("Throw unknown user error");
-			response.json(addFailureResponse(data));
+			response.json(addFailureResponse(data, "Unknow userId"));
     }
 	});
 });
