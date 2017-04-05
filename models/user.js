@@ -51,6 +51,10 @@ userSchema.statics.findUserByUserId = function(userId, callback){
   return this.find({userId: userId}, callback);
 };
 
+userSchema.statics.findUserIdBySocketId = function(socketId, callback){
+  return this.find({socketId: socketId}, callback);
+}
+
 userSchema.statics.removeUserByUserId = function(userId, callback){
   return this.remove({userId: userId}, callback);
 };

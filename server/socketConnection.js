@@ -5,6 +5,26 @@ var APP_SERVER = "https://update5-dot-icrdemo-1327.appspot.com/_ah/api/channelse
 var CONNECTION_STATE = (state, userId) => `/${state}/${userId}`;
 
 module.exports = function (socket) {
+  socket.on('disconnect',function(data){
+    var _this = this;
+    var socketId = _this.id;
+    User.findUserIdBySocketId(socketId, function(err, user){
+      if(err) throw err;
+      if(user.length > 0){
+        console.log("IN SOCKET DISCONNECTION",user[0].userId, data.message.type);
+        user = user[0];
+        var userId = user.userId;
+        if(userId){
+          var url = APP_SERVER+CONNECTION_STATE('disconnect', userId);
+          console.log(url);
+        } else {
+          console.log("Unknow user id");
+        }
+      } else {
+        console.log("Throw unknown user error");
+      }
+    });
+  });
   socket.on('addUser', function(data) {
     if(data){
       var userId = (data.userId) ? data.userId : EMPTY_VALUE;
