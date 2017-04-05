@@ -83,9 +83,11 @@ app.post('/_api/user/send_message', ( request, response ) => {
 				response.json(addSuccessResponse(data));
 	    } else {
 	      console.log("Unknow user id");
+				response.json(addFailureResponse(data));
 	    }
 	  } else {
       console.log("Throw unknown user error");
+			response.json(addFailureResponse(data));
     }
 	});
 });
