@@ -591,6 +591,9 @@ Rtc.prototype.afterCallAccepted = function(tempMsg){
         tempObj.trace("Client", "Message", ("User in room: " + tempMsg.userId));
         tempObj.createPeerConnection(tempMsg, "offer");
         if(!currentUser.isBusyWith || isReconnection) {
+              if(isReconnection){
+                currentUser.connections = {};
+              }
               tempObj.dataChannelCalls(currentUser.connections[tempMsg.userId].peerConnection, tempMsg.userId);
               tempObj.doCallTo(tempMsg.userId);
               currentUser.connections[tempMsg.userId].makeCall = true;
