@@ -1148,22 +1148,9 @@ Rtc.prototype.closeConnection = function(isAsync) {
       tempObj.localStream.getAudioTracks()[0].stop();
       tempObj.localStream.getVideoTracks()[0].stop();
       tempObj.localStream = null;
-      // tempObj.sendMessage({
-      //       type: "bye",
-      //       userId: tempObj.room.user.userId,
-      //       isHost: tempObj.room.user.host,
-      //       isAgent: tempObj.room.user.agent,
-      //       sendTo: tempObj.room.user.isBusyWith
-      // });
-
       tempObj.socket.close();
       if(rtc.room.user.agent || rtc.room.user.waiting){
-        // sendMessage({
-        //   command: "message",
-        //   url: tempObj.apiBaseUrl + "user/remove/" + tempObj.room.roomId + "/" + tempObj.room.user.userId
-        // }).then(log, error).catch(error);
         var url = tempObj.apiBaseUrl + "user/remove/" + tempObj.room.roomId + "/" + tempObj.room.user.userId;
-        // navigator.sendBeacon(url);
         tempObj.hitServer(url, isAsync)
         .get(tempObj.room.user.userId)
         .then(function () {
@@ -1177,9 +1164,8 @@ Rtc.prototype.closeConnection = function(isAsync) {
         });
 
         tempObj.currentConnections = 1;
-
-        tempObj.afterClosingConnections.call(empty);
       }
+      tempObj.afterClosingConnections.call(empty);
 };
 
 Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
@@ -1197,12 +1183,6 @@ Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
       tempObj.localStream.getVideoTracks()[0].stop();
       tempObj.localStream = null;
       if(!isTerminated && (rtc.room.user.agent || rtc.room.user.waiting)){
-
-        // sendMessage({
-        //   command: "message",
-        //   url: tempObj.apiBaseUrl + "user/remove/" + tempObj.room.roomId + "/" + tempObj.room.user.userId
-        // }).then(log, error).catch(error);
-
         var url = tempObj.apiBaseUrl + "user/remove/" + tempObj.room.roomId + "/" + tempObj.room.user.userId;
         tempObj.hitServer(url, isAsync)
         .get(tempObj.room.user.userId)
@@ -1215,17 +1195,6 @@ Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
 
         tempObj.currentConnections = 1;
       }
-
-      // if(!isTerminated){
-      //   tempObj.sendMessage({
-      //     type: "bye",
-      //     userId: tempObj.room.user.userId,
-      //     isHost: tempObj.room.user.host,
-      //     isAgent: tempObj.room.user.agent,
-      //     sendTo: tempObj.room.user.isBusyWith
-      //   });
-      // }
-
 
       tempObj.socket.close();
 
