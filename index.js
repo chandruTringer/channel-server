@@ -24,7 +24,7 @@ var options = {
 app.use(auth.connect(basic));
 app.use(bodyParser.json());
 var server = https.createServer(options, app);
-var io = socketIO(server);
+var io = socketIO(server,{'pingInterval': 2000, 'pingTimeout': 30000});
 
 var port = 443;
 

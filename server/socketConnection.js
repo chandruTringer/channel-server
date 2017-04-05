@@ -17,6 +17,10 @@ module.exports = function (socket) {
         if(userId){
           var url = APP_SERVER+CONNECTION_STATE('disconnect', userId);
           console.log(url);
+          Request.get(url)
+            .on('response', function(response){
+              console.log("CONNECTED");
+            });
         } else {
           console.log("Unknow user id");
         }
@@ -100,23 +104,5 @@ module.exports = function (socket) {
         console.log("Throw unknown user error");
       }
     });
-  });
-};
-
-module.exports.sendSocketMessage = function(data){
-  User.findUserByUserId(data.sendTo, function(err, user){
-    if(err) throw err;
-    if(user.length > 0){
-      console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
-      var sendTo = user[0].socketId;
-      var message = data.message;
-      if(sendTo){
-        socket.broadcast.to(sendTo).emit('message', message);
-      } else {
-        console.log("Unknow user id");
-      }
-    } else {
-      console.log("Throw unknown user error");
-    }
   });
 };
