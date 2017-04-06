@@ -20,6 +20,15 @@ module.exports = function (socket) {
           Request.get(url)
             .on('response', function(response){
               console.log("DISCONNECTED",response.statusCode);
+              User.removeUserByUserId(userId, function(err, success){
+                if(err){
+                  console.log("Exception: In Removing User");
+                  throw err;
+                }
+                if(success){
+                  console.log("Message: Deleted "+ userId);
+                }
+              });
             });
         } else {
           console.log("Unknow user id");
