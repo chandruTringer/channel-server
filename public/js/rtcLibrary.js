@@ -873,11 +873,24 @@ Rtc.prototype.handleMessage = function(tempMsg) {
 
             break;
             case "candidate":
-              var candidate = new RTCIceCandidate({
-                    sdpMLineIndex : tempMsg.label,
-                    candidate : tempMsg.candidate
-              });
-              tempObj.room.user.connections[tempMsg.userId].peerConnection.addIceCandidate(candidate);
+              if(typeof tempObj.room.user.connections[tempMsg.userId] == 'undefined') {
+                  tempObj.room.user.connections[tempMsg.userId] = {};
+              };
+              if(typeof tempObj.room.user.connections[tempMsg.userId].answered == 'undefined') {
+                    tempObj.room.user.connections[tempMsg.userId].answered = false;
+              };
+              if((tempObj.room.user.connections[tempMsg.userId].peerConnection) && (tempObj.room.user.connections[tempMsg.userId].answered == true)) {
+                    var candidate = new RTCIceCandidate({
+                          sdpMLineIndex : tempMsg.label,
+                          candidate : tempMsg.candidate
+                    });
+                    tempObj.room.user.connections[tempMsg.userId].peerConnection.addIceCandidate(candidate);
+              } else {
+                    if(!tempObj.room.user.connections[tempMsg.userId].candidatesReceived) {
+                          tempObj.room.user.connections[tempMsg.userId].candidatesReceived = [];
+                    }
+                    tempObj.room.user.connections[tempMsg.userId].candidatesReceived.push(tempMsg);
+              };
             break;
             case "audioToggle":
 
