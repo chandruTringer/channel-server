@@ -1,7 +1,7 @@
 var User = require('../models/user');
 var Request = require('request');
 var EMPTY_VALUE = "@EMPTY_VALUE";
-var APP_SERVER = "https://update5-dot-icrdemo-1327.appspot.com/_ah/api/channelservice/v1/channel"
+var APP_SERVER = "https://update6-dot-icrdemo-1327.appspot.com/_ah/api/channelservice/v1/channel"
 var CONNECTION_STATE = (state, userId) => `/${state}/${userId}`;
 
 module.exports = function (socket) {
