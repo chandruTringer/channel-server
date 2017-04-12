@@ -1,7 +1,8 @@
 window.candidateCount = 0;
+window.backOffStatus = [];
 window.addEventListener('load', function(e) {
-  window.addEventListener('online',  updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+  window.addEventListener('online',  onlineHandler);
+  window.addEventListener('offline', offlineHandler);
 	updateOnlineStatus(e);
 });
 
@@ -16,6 +17,99 @@ function updateOnlineStatus(e) {
 		setOnlineStatus(false);
 	}
 }
+
+function onlineHandler(){
+  if(window.backOffTimerId && rtc.room.user && rtc.room.user.isBusyWith){
+    mze().makeToast({
+      textMessage: "Please wait we are reconnecting you call.",
+      position: "top-left"
+    });
+    clearTimeout(window.backOffTimerId);
+    console.log(window.backOffTimerId);
+  }
+  window.ONLINE = true;
+  setOnlineStatus(true,true);
+}
+
+function offlineHandler(){
+  window.ONLINE = false;
+  setOnlineStatus(false,true);
+}
+
+function updateOnlineIndicator(online){
+  var onlineIndicator = document.getElementById('icon-online');
+  if(online){
+    onlineIndicator.classList.add("online");
+  } else {
+    onlineIndicator.classList.remove("online");
+  }
+}
+
+function setOnlineStatus(status,enableReconnection){
+	if(status){
+    updateOnlineIndicator(true);
+    if(enableReconnection){
+      window.reconnectTimer = setTimeout(function(){
+        reconnectWithPeer();
+      },5000);
+    }
+	} else {
+    updateOnlineIndicator(false);
+		setBackoffStatus( new Date().getTime() );
+	}
+}
+
+function checkStatusAfterLastBackOff() {
+  if(rtc.room.user && rtc.room.user.isBusyWith){
+    console.log("Exceeded duration");
+    alert("Poor network, Please check your internet connection");
+    rtc.closeAllConnections(
+      null,
+      true
+    );
+    mze().makeToast({
+      textMessage: "Your call is being redirected",
+      position: "top-left"
+    });
+  } else {
+    console.log("User not in connection");
+  }
+}
+
+function setBackoffStatus(value){
+	window.backOffStatus.push(value);
+  mze().makeToast({
+    textMessage: "Please check your internet connection. We will try to reconnect, if we get internet within 32s",
+    position: "top-left"
+  });
+	window.backOffTimerId = setTimeout(function(){
+		checkStatusAfterLastBackOff();
+	},32000);
+	console.log(window.backOffTimerId);
+}
+
+function reconnectWithPeer(){
+  clearTimeout(window.reconnectTimer);
+  if(rtc.room.user && rtc.room.user.isBusyWith){
+    var videoDomSelector = "div-"+rtc.room.user.isBusyWith;
+    try{
+      videoDom = document.getElementById(videoDomSelector);
+      videoDom.parentNode.removeChild(videoDom);
+      rtc.room.connections = {};
+    } catch(e){
+      console.log(e.stack);
+    }
+    rtc.sendMessage({
+        type: "reconnect",
+        userId: rtc.room.user.userId,
+        firstName: rtc.room.user.firstName,
+        lastname: rtc.room.user.lastName,
+        email: rtc.room.user.email,
+        sendTo: rtc.room.user.isBusyWith
+    });
+  }
+}
+
 
 document.getElementById('chat-msg-box').disabled = true;
 
@@ -431,83 +525,6 @@ function createDiv(className, id) {
   tempDiv.classList.add(className);
   return tempDiv;
 }
-function checkStatusAfterLastBackOff() {
-  if(!window.backOffStatus){
-    return;
-  }
-	var backOffStatus = window.backOffStatus;
-	var lastBackOffTime = parseInt(new Date().getTime() - backOffStatus.time);
-	if(lastBackOffTime > 60000){
-		console.log("Exceeded duration");
-    if(rtc.room.user && rtc.room.user.isBusyWith){
-      alert("Poor network, Please check your internet connection");
-      rtc.closeAllConnections(
-        null,
-        true
-      );
-    }
-    mze().makeToast({
-      textMessage: "Your call is being redirected",
-      position: "top-left"
-    });
-	} else {
-    mze().makeToast({
-      textMessage: "Call Resumed",
-      position: "top-left"
-    });
-    window.OverlayObject && OverlayObject.hideOverlay();
-		console.log("Connect before threshold");
-	}
-}
-function setBackoffStatus(value){
-	var backOffStatus = {};
-	backOffStatus.time = value;
-	backOffStatus.timerId = setTimeout(function(){
-		checkStatusAfterLastBackOff();
-	},60000);
-  window.backOffStatus = backOffStatus;
-	console.log(backOffStatus);
-}
-function resetBackoffStatus(){
-	clearTimeout(window.backOffStatus.timerId);
-	window.backOffStatus = {};
-}
-function reconnectWithPeer(){
-  clearTimeout(window.reconnectTimer);
-  if(rtc.room.user && rtc.room.user.isBusyWith){
-    var videoDomSelector = "div-"+rtc.room.user.isBusyWith;
-    try{
-      videoDom = document.getElementById(videoDomSelector);
-      videoDom.parentNode.removeChild(videoDom);
-      rtc.room.connections = {};
-    } catch(e){
-      console.log(e.stack);
-    }
-    rtc.sendMessage({
-          type: "reconnect",
-          userId: rtc.room.user.userId,
-          firstName: rtc.room.user.firstName,
-          lastname: rtc.room.user.lastName,
-          email: rtc.room.user.email,
-          sendTo: rtc.room.user.isBusyWith
-    });
-  }
-}
-function setOnlineStatus(status){
-	var onlineIndicator = document.getElementById('icon-online');
-	if(status){
-		onlineIndicator.classList.add("online");
-    window.reconnectTimer = setTimeout(function(){
-      reconnectWithPeer();
-    },5000);
-    if(window.backOffStatus){
-      resetBackoffStatus();
-    }
-	} else {
-		setBackoffStatus( new Date().getTime() );
-		onlineIndicator.classList.remove("online");
-	}
-}
 
 function showCallHold(){
   var template = Template.getWaitingSpinner();
@@ -616,9 +633,10 @@ function showIncomingCaller(message,ref){
 	  });
   };
 
-  setTimeout(function(){
+  var timer = setTimeout(function(){
     if(!hasAction){
       ref.afterCallDeclined(message);
+      clearTimeout(timer);
     }
   },60000)
 

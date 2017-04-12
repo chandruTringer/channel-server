@@ -345,6 +345,14 @@ Rtc.prototype.createPeerConnection = function(inRoomMsg) {
       var remoteUserId = inRoomMsg.userId;
       tempObj.peerConnection = new RTCPeerConnection(tempObj.configuration);
       tempObj.peerConnection.onicecandidate = (function(e) { tempObj.onIceCandidate(e); });
+      tempObj.peerConnection.onsignalingstatechange = function(event){
+        if (peerConnection.iceconnectionstate === "failed") {
+          mze().makeToast({
+            textMessage: "Your other peer went offline",
+            position: "top-left"
+          });
+        }
+      }
       tempObj.peerConnection.addStream(tempObj.localStream);
       tempObj.peerConnection.onaddstream = (function(e) { tempObj.onRemoteStreamAdded(e, remoteUserId); });
       tempObj.room.user.connections[remoteUserId] = tempObj.room.user.connections[remoteUserId] || {};
@@ -647,7 +655,7 @@ Rtc.prototype.showWaitingStatus = function(tempMsg, tempObj){
 Rtc.prototype.afterDeletingCurrentCustomer = function(tempMsg, responseData){
 	var tempObj = this;
     var userId = tempMsg.userId;
-    var firstName = tempObj.room.user.connections[userId].firstName;
+    var firstName = tempMsg.firstName;
     var type = tempMsg.type;
       if(responseData !== undefined){
             tempObj.trace("Server", "Message", "User successfully deleted.");
@@ -697,15 +705,15 @@ Rtc.prototype.afterDeletingCurrentCustomer = function(tempMsg, responseData){
               tempObj.room.user.callStage++;
             }
 
-            document.removeEventListener("afterUserInRoom", tempObj.afterUserInRoom);
-            document.addEventListener("afterUserInRoom", tempObj.afterUserInRoom);
-            var afterUserInRoom = new CustomEvent("afterUserInRoom", {
-                  detail: {
-                        userId: tempMsg.userId,
-                        firstName: firstName
-                  }
-            });
-            document.dispatchEvent(afterUserInRoom);
+            // document.removeEventListener("afterUserInRoom", tempObj.afterUserInRoom);
+            // document.addEventListener("afterUserInRoom", tempObj.afterUserInRoom);
+            // var afterUserInRoom = new CustomEvent("afterUserInRoom", {
+            //       detail: {
+            //             userId: tempMsg.userId,
+            //             firstName: firstName
+            //       }
+            // });
+            // document.dispatchEvent(afterUserInRoom);
       } else {
             // Flow to remove the last customer
             tempObj.currentConnections = tempObj.currentConnections - 1;
