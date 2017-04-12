@@ -345,7 +345,7 @@ Rtc.prototype.createPeerConnection = function(inRoomMsg) {
       var remoteUserId = inRoomMsg.userId;
       tempObj.peerConnection = new RTCPeerConnection(tempObj.configuration);
       tempObj.peerConnection.onicecandidate = (function(e) { tempObj.onIceCandidate(e); });
-      tempObj.peerConnection.onsignalingstatechange = function(event){
+      tempObj.peerConnection.oniceconnectionstatechange = function(event){
         console.log(event);
         var state = event.currentTarget.iceConnectionState;
         if (state === "failed") {
