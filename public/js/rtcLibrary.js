@@ -1395,7 +1395,7 @@ Rtc.prototype.hitServer = function(url, isAsync) {
                                     // Performs the function "resolve" when this.status is equal to 2xx
                                     var response = JSON.parse(this.response);
                                     switch(response.responseCode) {
-                                          case "ER_001":
+                                          case "ERR_ICR_007":
                                             alert("No Agent Available");
                                             // tempObj.closeAllConnections();
                                             break;
