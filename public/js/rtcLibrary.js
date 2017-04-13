@@ -348,7 +348,8 @@ Rtc.prototype.createPeerConnection = function(inRoomMsg) {
       tempObj.peerConnection.oniceconnectionstatechange = function(event){
         console.log(event);
         var state = event.currentTarget.iceConnectionState;
-        if (state === "failed") {
+        var peerActive = tempObj.room.user.isBusyWith;
+        if (state === "failed" && peerActive) {
           mze().makeToast({
             textMessage: "Your other peer went offline",
             position: "top-left"
