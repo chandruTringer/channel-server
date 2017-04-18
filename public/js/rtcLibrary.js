@@ -1024,6 +1024,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
               tempObj.deleteCurrentCustomer(tempMsg);
               tempObj.isWatingToConnect = true;
             } else {
+              tempObj.deleteCurrentCustomer(tempMsg);
               if(OverlayObject){
                 OverlayObject.hideOverlay();
               }
