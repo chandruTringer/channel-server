@@ -1412,7 +1412,6 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                       break;
 
                       default:
-                      debugger;
                       resolve(response.responseValue, response);
                       break;
                     }
