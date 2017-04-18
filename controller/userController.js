@@ -31,7 +31,7 @@ exports.createUser = ( request, response ) => {
 exports.sendMessage = ( request, response, io ) => {
     var data = request.body;
     User.findUserByUserId(data.sendTo, function(err, user){
-
+        console.log(data);
         if(err) throw err;
 
         if(user.length > 0){
