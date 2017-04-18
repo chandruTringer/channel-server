@@ -156,12 +156,15 @@ Rtc.prototype.init = function(params) {
       document.getElementById(tempObj.callButton).onclick = function(event) {
         event.preventDefault();
         var formDom = document.getElementById(tempObj.formId);
+        formDom.classList.add("disable");
         var formData = new FormData(formDom);
 
         var server = tempObj.hitServer(tempObj.roomAndUserUrl);
-        formDom.classList.add("disable");
         server.post(formData)
-        .then(function (responseData) {
+        .then(function (responseData, response) {
+          if(response){
+                console.log(response);
+          }
           formDom.classList.remove("disable");
           var roomData = responseData;
           var isAgentSwitched = (responseData.previousAgentId);
@@ -211,6 +214,7 @@ Rtc.prototype.init = function(params) {
           }
         })
         .catch(function (responseData) {
+            console.log(responseData);
           tempObj.trace("Server", "Error", "Room creation failed! Retry after sometime.");
         });
       };
@@ -986,6 +990,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
               sendTo: tempMsg.userId
             });
             var videoDomSelector = "div-"+tempMsg.agentId;
+            tempObj.room.hostId = tempMsg.userId;
             try{
               videoDom = document.getElementById(videoDomSelector);
               videoDom.parentNode.removeChild(videoDom);
@@ -1405,7 +1410,9 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                       alert("No Agent Available");
                       // tempObj.closeAllConnections();
                       break;
+
                       default:
+                      debugger;
                       resolve(response.responseValue, response);
                       break;
                     }
