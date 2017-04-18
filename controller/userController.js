@@ -35,14 +35,15 @@ exports.sendMessage = ( request, response, io ) => {
         if(err) throw err;
 
         if(user.length > 0){
-            console.log("IN SEND MESSAGE API",
-            "Sending To: "+user[0].userId, 
-            "Sent By: "+data.userId);
             var user = user[0];
             var userId = user.userId;
             var sendTo = user.socketId;
             var message = data.message;
             var sockets = io.sockets;
+            console.log("IN SEND MESSAGE API",
+            "Sending To: "+userId, 
+            "Sent By: "+data.userId,
+            "Type: "+message.type);
             if(sendTo && sockets.connected[sendTo]){
                 sockets.connected[sendTo].send(data);
                 response.json(addSuccessResponse(data));

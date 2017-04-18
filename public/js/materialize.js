@@ -375,7 +375,7 @@
     tempParams.actionText = (typeof tempObj.actionText === 'undefined') ? "" : tempObj.actionText;
     tempParams.persistent = (typeof tempObj.persistent === 'undefined') ? false : tempObj.persistent;
     // Handlers initiation
-    tempParams.actionCallback = (typeof tempObj.actionCallback === 'undefined') ? _this.emptyFunction : tempObj.actionCallback;
+    tempParams.actionCallback = (typeof tempObj.actionCallback === 'undefined') ? function(){} : tempObj.actionCallback;
 
     if(typeof tempParams.actionCallback === "function") {
 

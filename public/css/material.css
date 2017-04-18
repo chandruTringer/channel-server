@@ -480,7 +480,7 @@ Material Form Toasts
       max-width: 568px;
       min-width: 288px;
       padding: 24px;
-
+      z-index: 999;
       box-sizing: border-box;
       border-radius: 2px;
 

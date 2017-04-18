@@ -162,9 +162,6 @@ Rtc.prototype.init = function(params) {
         var server = tempObj.hitServer(tempObj.roomAndUserUrl);
         server.post(formData)
         .then(function (responseData, response) {
-          if(response){
-                console.log(response);
-          }
           formDom.classList.remove("disable");
           var roomData = responseData;
           var isAgentSwitched = (responseData.previousAgentId);
@@ -215,6 +212,7 @@ Rtc.prototype.init = function(params) {
         })
         .catch(function (responseData) {
             console.log(responseData);
+            formDom.classList.remove("disable");
           tempObj.trace("Server", "Error", "Room creation failed! Retry after sometime.");
         });
       };
@@ -1412,7 +1410,14 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                       break;
 
                       default:
-                      resolve(response.responseValue, response);
+                        if(response.responseCode.startsWith("ERR_ICR_")){
+                              mze().makeToast({
+                                    textMessage: response.responseMessage,
+                                    position: "top-left"
+                              });
+                        } else {
+                              resolve(response.responseValue, response);
+                        }
                       break;
                     }
                   } else {
