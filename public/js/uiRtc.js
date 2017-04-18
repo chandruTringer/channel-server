@@ -237,7 +237,6 @@ function createVideoTag(id, firstName, callAttendTime) {
   div.classList.add("single-mini-video");
   var video = document.createElement("video");
   video.autoplay = true;
-  video.muted = true;
   video.id = id;
   video.height = 150;
   video.width = 200;

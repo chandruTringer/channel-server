@@ -19,6 +19,11 @@ video{
       transform: rotateY(180deg);
 }
 
+.disable{
+      pointer-events: none;
+      opacity: 0.5;
+}
+
 .float-right {
       float: right !important;
 }
