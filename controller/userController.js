@@ -28,7 +28,7 @@ exports.createUser = ( request, response ) => {
     });
 };
 
-exports.sendMessage = ( request, response ) => {
+exports.sendMessage = ( request, response, io ) => {
     var data = request.body;
     User.findUserByUserId(data.sendTo, function(err, user){
 
