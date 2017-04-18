@@ -1405,8 +1405,8 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                     var response = JSON.parse(this.response);
                     switch(response.responseCode) {
                       case "ERR_ICR_007":
+                      resolve(response.responseValue, response);
                       alert("No Agent Available");
-                      // tempObj.closeAllConnections();
                       break;
 
                       default:
