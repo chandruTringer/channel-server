@@ -50,7 +50,9 @@ var fs = require('fs'),
     try {
         app.get('/_api/user/create/:_id', userController.createUser);
 
-        app.post('/_api/user/send_message', userController.sendMessage);
+        app.post('/_api/user/send_message', function(req, res){
+			userController.sendMessage(req, res, io);
+		});
 
         io.on('connection', socketConnection);
     } catch(err) {
