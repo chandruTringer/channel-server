@@ -101,9 +101,12 @@ module.exports = function (socket) {
     User.findUserByUserId(data.sendTo, function(err, user){
       if(err) throw err;
       if(user.length > 0){
-        console.log("IN SEND MESSAGE USER",user[0].userId, data.message.type);
         var sendTo = user[0].socketId;
         var message = data.message;
+        console.log("IN SEND MESSAGE",
+            "Sending To: "+sendTo, 
+            "Sending By: "+data.message.userId,
+            data.type);
         if(sendTo){
           socket.broadcast.to(sendTo).emit('message', message);
         } else {

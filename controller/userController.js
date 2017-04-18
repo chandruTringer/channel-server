@@ -37,7 +37,7 @@ exports.sendMessage = ( request, response, io ) => {
         if(user.length > 0){
             console.log("IN SEND MESSAGE API",
             "Sending To: "+user[0].userId, 
-            "Sending By: "+data.userId,
+            "Sending By: "+data.message.userId,
             data.type);
             var user = user[0];
             var userId = user.userId;
