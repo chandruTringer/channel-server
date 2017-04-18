@@ -605,7 +605,7 @@ function updateScroll(){
 }
 
 function initiateCallHold(event) {
-  var tempText = document.querySelector("#modal-sample .dialog-title").innerText;
+  var tempText = "Your call is waiting with agent {{agentName}}";
   tempText = tempText.replace("{{agentName}}", event.detail.firstName);
   document.querySelector("#modal-sample .dialog-title").innerText = tempText;
 
