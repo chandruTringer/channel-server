@@ -159,11 +159,16 @@
       innerList.onclick = function(event) {
         if(element.name == "userType") {
           if(event.target.dataset.value == "customer") {
+            var randomNumber = Math.floor(Math.random()*Math.pow(10,10));
             document.getElementById('customer-form').style.display = "block";
             document.getElementsByName("firstName")[0].value = "abcd";
-            document.getElementsByName("email")[0].value = "abcd@gmail.com";
+            document.getElementsByName("email")[0].value = "abcd"+randomNumber+"@gmail.com";
+            document.getElementsByName("phone")[0].value = randomNumber;
           } else {
             document.getElementById('customer-form').style.display = "none";
+            document.getElementsByName("firstName")[0].value = "Guru";
+            document.getElementsByName("email")[0].value = "agent3@gmail.com";
+            document.getElementsByName("phone")[0].value = "3333333333";
           };
         };
       }

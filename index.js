@@ -45,6 +45,7 @@ var fs = require('fs'),
 
     // Routing
     app.use(express.static(__dirname + '/public'));
+	app.use(bodyParser.json());
 
     try {
         app.get('/_api/user/create/:_id', userController.createUser);
