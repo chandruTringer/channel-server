@@ -1024,6 +1024,9 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
               tempObj.deleteCurrentCustomer(tempMsg);
               tempObj.isWatingToConnect = true;
             } else {
+              // changing it to inRoom so that it will connect with the 
+              // next customer in the queue
+              tempMsg.type = "inRoom"
               tempObj.deleteCurrentCustomer(tempMsg);
               if(OverlayObject){
                 OverlayObject.hideOverlay();
