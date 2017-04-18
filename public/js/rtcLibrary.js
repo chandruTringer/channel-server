@@ -1415,6 +1415,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                                     textMessage: response.responseMessage,
                                     position: "top-left"
                               });
+                              resolve(response.responseValue, response);
                         } else {
                               resolve(response.responseValue, response);
                         }
