@@ -506,12 +506,14 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
       var tempObj = this;
       var socket = io('/');
       socket.on('connect', function(){
-        tempObj.onChannelOpened.call(tempObj);
         socket.emit('addUser',{
           userId: tempObj.room.user.userId,
           socketId: socket.id,
           channelToken: channelToken
         });
+        socket.on('userAdded',function(data){
+          tempObj.onChannelOpened.call(tempObj);
+        })
         socket.on('message', function(message){
           tempObj.onChannelMessage.call(tempObj,message);
         });

@@ -65,6 +65,9 @@ module.exports = function (socket) {
             console.log(err);
             if(successResponse){
               console.log("Update User socketId: "+_updatedContent.socketId);
+              socket.broadcast.to(_updatedContent.socketId).emit('userAdded', {
+                success: true
+              });
             }
           });
         } else {
