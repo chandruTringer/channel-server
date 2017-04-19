@@ -57,7 +57,6 @@ var fs = require('fs'),
         io.on('connection', socketConnection);
     } catch(err) {
         console.log(err);
-        throw err;
     }
 
     process.on('uncaughtException', function (err) {
