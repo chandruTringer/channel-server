@@ -38,7 +38,7 @@ module.exports = function (socket) {
       }
     });
   });
-  socket.on('addUser', function(data) {
+  socket.on('addUser', function(data, resolve) {
     if(data){
       var userId = (data.userId) ? data.userId : EMPTY_VALUE;
       var socketId = (data.socketId) ? data.socketId : EMPTY_VALUE;
@@ -65,9 +65,7 @@ module.exports = function (socket) {
             console.log(err);
             if(successResponse){
               console.log("Update User socketId: "+_updatedContent.socketId);
-              socket.broadcast.to(_updatedContent.socketId).emit('userAdded', {
-                success: true
-              });
+              resolve();
             }
           });
         } else {

@@ -510,10 +510,10 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
           userId: tempObj.room.user.userId,
           socketId: socket.id,
           channelToken: channelToken
-        });
-        socket.on('userAdded',function(data){
+        },
+        function(){
           tempObj.onChannelOpened.call(tempObj);
-        })
+        });
         socket.on('message', function(message){
           tempObj.onChannelMessage.call(tempObj,message);
         });
