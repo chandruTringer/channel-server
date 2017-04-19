@@ -159,16 +159,16 @@ modalOverlay.prototype = {
     }
     _self.presetSlideIn(overlay, transitionObject).done(function(){
       _self.slideInOverlay(overlay, transitionObject);
-      _self.createEventForOverlay();
+      // _self.createEventForOverlay();
     }
     );
   },
-  createEventForOverlay: function(){
-    var _this = this;
-    $(document).on("click touchstart", ".capture",function(){
-      _this.hideOverlay();
-    });
-  },
+  // createEventForOverlay: function(){
+  //   var _this = this;
+  //   $(document).on("click touchstart", ".capture",function(){
+  //     _this.hideOverlay();
+  //   });
+  // },
   hideOverlay: function() {
 		var $modalBackground = $("#page__modal-background"),
 		$overlay = $("#page__overlay"),
