@@ -18,6 +18,13 @@ function updateOnlineStatus(e) {
 	}
 }
 
+function checkOnline(callback){
+  var server = rtc.hitServer('/_api/network');
+  server.head().then(function(data){
+    callback(data);
+  });
+}
+
 function onlineHandler(){
   if(window.backOffTimerId && rtc.room.user && rtc.room.user.isBusyWith){
     mze().makeToast({

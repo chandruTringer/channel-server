@@ -54,6 +54,10 @@ var fs = require('fs'),
 			userController.sendMessage(req, res, io);
 		});
 
+        app.head('/_api/network', function(req, res){
+            res.json({success: true});
+        })
+
         io.on('connection', socketConnection);
     } catch(err) {
         console.log(err);

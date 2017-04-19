@@ -354,12 +354,19 @@ Rtc.prototype.createPeerConnection = function(inRoomMsg) {
     console.log(event);
     var state = event.currentTarget.iceConnectionState;
     var peerActive = tempObj.room.user.isBusyWith;
-    if (state === "failed" && peerActive) {
-      mze().makeToast({
-        textMessage: "Your other peer went offline",
-        position: "top-left"
-      });
-    }
+    checkOnline(function(data){
+      if(data.success){
+        if (state === "failed" && peerActive) {
+        mze().makeToast({
+            textMessage: "Your other peer went offline",
+            position: "top-left"
+          });
+        }
+      } else {
+        window.ONLINE = false;
+		    setOnlineStatus(false);
+      }
+    });
   }
   tempObj.peerConnection.addStream(tempObj.localStream);
   tempObj.peerConnection.onaddstream = (function(e) { tempObj.onRemoteStreamAdded(e, remoteUserId); });
@@ -1394,6 +1401,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
 
                 // Instantiates the XMLHttpRequest
                 var client = new XMLHttpRequest();
+                client.method = method;
                 var uri = url;
 
                 client.open(method, uri, isAsync);
@@ -1411,6 +1419,9 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                 client.onload = function () {
                   if (this.status >= 200 && this.status < 300) {
                     // Performs the function "resolve" when this.status is equal to 2xx
+                    if(this.method === "HEAD"){
+                      resolve({success: true});
+                    }
                     var response = JSON.parse(this.response);
                     switch(response.responseCode) {
                       case "ERR_ICR_007":
@@ -1437,6 +1448,10 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                 };
 
                 client.onerror = function () {
+                  if(this.method === "HEAD"){
+                    resolve({success: false});
+                    return;
+                  }
                   reject(this.statusText);
                 };
               });
@@ -1459,6 +1474,9 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
             },
             'delete': function(args) {
               return core.ajax('DELETE', url, args);
+            },
+            'head': function(args) {
+              return core.ajax('HEAD', url, args);
             }
           };
         };
