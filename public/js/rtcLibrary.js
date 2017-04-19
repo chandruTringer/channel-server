@@ -351,22 +351,24 @@ Rtc.prototype.createPeerConnection = function(inRoomMsg) {
   tempObj.peerConnection = new RTCPeerConnection(tempObj.configuration);
   tempObj.peerConnection.onicecandidate = (function(e) { tempObj.onIceCandidate(e); });
   tempObj.peerConnection.oniceconnectionstatechange = function(event){
-    console.log(event);
-    var state = event.currentTarget.iceConnectionState;
-    var peerActive = tempObj.room.user.isBusyWith;
-    checkOnline(function(data){
-      if(data.success){
-        if (state === "failed" && peerActive) {
-        mze().makeToast({
-            textMessage: "Your other peer went offline",
-            position: "top-left"
-          });
+    if(event.currentTarget.iceConnectionState === "failed"){
+      console.log(event);
+      var state = event.currentTarget.iceConnectionState;
+      var peerActive = tempObj.room.user.isBusyWith;
+      checkOnline(function(data){
+        if(data.success){
+          if (state === "failed" && peerActive) {
+          mze().makeToast({
+              textMessage: "Your other peer went offline",
+              position: "top-left"
+            });
+          }
+        } else {
+          window.ONLINE = false;
+          setOnlineStatus(false);
         }
-      } else {
-        window.ONLINE = false;
-		    setOnlineStatus(false);
-      }
-    });
+      });
+    }
   }
   tempObj.peerConnection.addStream(tempObj.localStream);
   tempObj.peerConnection.onaddstream = (function(e) { tempObj.onRemoteStreamAdded(e, remoteUserId); });
