@@ -1421,6 +1421,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
                     // Performs the function "resolve" when this.status is equal to 2xx
                     if(this.method === "HEAD"){
                       resolve({success: true});
+                      return;
                     }
                     var response = JSON.parse(this.response);
                     switch(response.responseCode) {
