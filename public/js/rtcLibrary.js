@@ -849,9 +849,7 @@ Rtc.prototype.doCallTo = function(remoteUserId) {
 
             break;
             case "offer":
-            if(document.getElementsByClassName("material-dialog").length > 0){
-              document.getElementsByClassName("material-dialog")[0].style.display = "none";
-            }
+            mze().closeDialog()
             tempObj.room.user.callStage++; // Moving to offer received stage
             tempObj.trace("Client", "Message", ("Offer from user: " + tempMsg.userId));
             tempObj.createPeerConnection(tempMsg, "answer");
