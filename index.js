@@ -1,4 +1,3 @@
-// Setup basic express server
 var fs = require('fs'),
     auth = require('http-auth'),
     http = require('http');
@@ -7,7 +6,7 @@ var fs = require('fs'),
     socketIO = require('socket.io'),
     bodyParser = require('body-parser'),
     socketConnection = require('./server/socketConnection'),
-    userController = require('./controller/userController.js');
+    userController = require('./controller/userController.js'),
 
     // Authentication module.
     basic = auth.basic({
@@ -43,7 +42,7 @@ var fs = require('fs'),
         console.log('Server listening at port %d', port);
     });
 
-    // Routing
+    // Middlewares
     app.use(express.static(__dirname + '/public'));
 	app.use(bodyParser.json());
 
