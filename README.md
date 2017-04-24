@@ -8,7 +8,7 @@ A simple webrtc customer service care app using socket.io
 ```
 $ cd webrtc
 $ npm install
-$ npm npm run liveServer / devServer
+$ npm run liveServer / devServer
 ```
 
 And point your browser to `http://localhost:3000`. Optionally, specify
