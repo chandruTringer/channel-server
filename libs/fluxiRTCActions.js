@@ -230,7 +230,7 @@ module.exports = {
     }
   },
   handleTerminate: function handleTerminate(tempMsg){
-    tempObj.closeAllConnections(
+    fluxiRTC.closeAllConnections(
       null,
       true
     );
