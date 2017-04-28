@@ -1,56 +1,56 @@
 fluxiRTC
     - media: Media
-        -- localStream: MediaStream
-        -- mediaReady: Boolean
-        -- isVideoMuted: Boolean
-        -- isAudioMuted: Boolean
-        -- isFullScreen: Boolean
-        -- activateUserMedia: Function
-        -- audioToggleHandler: Function
-        -- videoToggleHandler: Function
-        -- fullScreenToggleHandler: Function
+     ` -- localStream: MediaStream
+     ` -- mediaReady: Boolean
+     ` -- isVideoMuted: Boolean
+     ` -- isAudioMuted: Boolean
+     ` -- isFullScreen: Boolean
+     ` -- activateUserMedia: Function
+     ` -- audioToggleHandler: Function
+     ` -- videoToggleHandler: Function
+     ` -- fullScreenToggleHandler: Function
     - signaller: Signaller
-        -- channelReady: Boolean
-        -- socket: socketIO
-        -- _openChannel: Function
-        -- onChannelMessage: Function
-        -- sendMessage: Function
-        -- onChannelOpened: Function
+     ` -- channelReady: Boolean
+     ` -- socket: socketIO
+     ` -- _openChannel: Function
+     ` -- onChannelMessage: Function
+     ` -- sendMessage: Function
+     ` -- onChannelOpened: Function
     - webRTC: WebRTC
-        -- localPeerConnection: RTCPeerConnection
-        -- remotePeerConnection: RTCPeerConnection
-        -- configuration: Object
-        -- peerConnection: RTCPeerConnection
-        -- sdpConstraints: Object
-        -- offerConstraints: Object
-        -- currentConnections: Number
-        -- callStages: Array
-        -- createPeerConnection: Function
-        -- getConstraints: Function
-        -- doCallTo: Function
-        -- doAnswerTo: Function
-        -- setLocalAndSendMessage: Function
-        -- setRemote: Function
-        -- mergeConstraints: Function
-        -- pushIceCandidates: Function
-        -- onRemoteStreamAdded: Function
-        -- onIceCandidate: Function
+     ` -- localPeerConnection: RTCPeerConnection
+     ` -- remotePeerConnection: RTCPeerConnection
+     ` -- configuration: Object
+     ` -- peerConnection: RTCPeerConnection
+     ` -- sdpConstraints: Object
+     ` -- offerConstraints: Object
+     ` -- currentConnections: Number
+     ` -- callStages: Array
+     ` -- createPeerConnection: Function
+     ` -- getConstraints: Function
+     ` -- doCallTo: Function
+     ` -- doAnswerTo: Function
+     ` -- setLocalAndSendMessage: Function
+     ` -- setRemote: Function
+     ` -- mergeConstraints: Function
+     ` -- pushIceCandidates: Function
+     ` -- onRemoteStreamAdded: Function
+     ` -- onIceCandidate: Function
     - webRTCDataChannel: WebRTCDataChannel
-        -- dataChannel: Object
-        -- receiveChannel: Object
-        -- dataChannelOptions: Object
-        -- previousMessageToken: Number
-        -- dataChannelCalls: Function
-        -- createDataChannelHandlers: Function
-        -- handleChannelMsg: Function
-        -- composeDataChannelMsgs: Function
-        -- buildChatMsgs: Function
+     ` -- dataChannel: Object
+     ` -- receiveChannel: Object
+     ` -- dataChannelOptions: Object
+     ` -- previousMessageToken: Number
+     ` -- dataChannelCalls: Function
+     ` -- createDataChannelHandlers: Function
+     ` -- handleChannelMsg: Function
+     ` -- composeDataChannelMsgs: Function
+     ` -- buildChatMsgs: Function
     - hitServer: Server
-        -- get
-        -- post
-        -- delete
-        -- put
-        -- head
+     ` -- get
+     ` -- post
+     ` -- delete
+     ` -- put
+     ` -- head
     - startWebrtcSteps: Function
     - openChannel: Function
     - initCustomHandlrs: Function
@@ -62,35 +62,3 @@ fluxiRTC
     - showWaitingStatus: Function
     - afterDeletingCurrentCustomer: Function
     - deleteCurrentCustomer: Function
-
-
-
-
-Rtc
-    afterAudioMute:doAudioToggle(event)
-    afterAudioToggle:doAudioToggle(event)
-    afterClosingConnections:closeCall(event)
-    afterGettingMedia:feedMediaToTag(event)
-    afterGettingUser:setRoomForCall(event)
-    afterOpeningChannel:logConsole()
-    afterReceivingAnswer:setupCall(event)
-    afterReceivingOffer:setupCall(event)
-    afterReceivingStream:feedMediaToTag(event)
-    afterRemoteLeaving:destroyLeavingStreams(event)
-    afterTextMessage:buildChatBox(event)
-    afterUserInRoom:notifyUser(event)
-    afterVideoMute:doVideoToggle(event)
-    afterVideoToggle:doVideoToggle(event)
-    madeToWait:initiateCallHold(event)
-    apiBaseUrl:"https://update6-dot-icrdemo-1327.appspot.com/_ah/api/roomservice/v1/"
-    audioToggleButton:"mic-toggle"
-    callButton:"call-form-button"
-    chat:true
-    chatField:"chat-msg-box"
-    formId:"call-form"
-    fullScreenToggleButton:"fullscreen-toggle"
-    hangupButton:"hangup-toggle"
-    roomAndUserUrl:"https://update6-dot-icrdemo-1327.appspot.com/_ah/api/roomservice/v1/room/create"
-    videoToggleButton:"cam-toggle"
-    constructor:()
-    room:Object
