@@ -70,12 +70,12 @@ const addUser = (user, callback) => {
     User.findUserByUserId(user.userId, function(err, users){
       if(err) throw err;
       if(users.length > 0){
-        console.log("UserId Already Exists", users);
+        console.log(new Date()+" :UserId Already Exists", users);
         User.removeUserByUserId(user.userId, function(err, users){
           User.create(addChannelToken(user),callback);
         });
       } else {
-        console.log("New UserId");
+        console.log(new Date()+" :New UserId");
         User.create(addChannelToken(user),callback);
       }
     });

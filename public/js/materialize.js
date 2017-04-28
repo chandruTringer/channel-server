@@ -20,19 +20,23 @@
   Materialize.prototype.init = function() {
     var _this = this;
     var tempLength = _this.elements.length;
-    while(tempLength--) {
-      switch(_this.elements[tempLength].nodeName) {
-        case "FORM":
-        var outerDiv = document.createElement("DIV");
-        outerDiv.classList.add("material-form-outer");
-        _this.elements[tempLength].innerHTML = "<div class='material-form-outer'>" + _this.elements[tempLength].innerHTML + '</div>';
-        _this.forms(_this.elements[tempLength].firstChild);
-        break;
-        default:
-        console.log("Materialize not yet handled for this element. Kindly report.");
-        break;
+    var promise =  new Promise( function (resolve, reject) {
+      while(tempLength--) {
+        switch(_this.elements[tempLength].nodeName) {
+          case "FORM":
+          var outerDiv = document.createElement("DIV");
+          outerDiv.classList.add("material-form-outer");
+          _this.elements[tempLength].innerHTML = "<div class='material-form-outer'>" + _this.elements[tempLength].innerHTML + '</div>';
+          _this.forms(_this.elements[tempLength].firstChild);
+          break;
+          default:
+          console.log("Materialize not yet handled for this element. Kindly report.");
+          break;
+        }
       }
-    }
+      resolve();
+    });
+    return promise;
   };
 
   Materialize.prototype.forms = function(element) {
@@ -159,11 +163,16 @@
       innerList.onclick = function(event) {
         if(element.name == "userType") {
           if(event.target.dataset.value == "customer") {
+            var randomNumber = Math.floor(Math.random()*Math.pow(10,10));
             document.getElementById('customer-form').style.display = "block";
             document.getElementsByName("firstName")[0].value = "abcd";
-            document.getElementsByName("email")[0].value = "abcd@gmail.com";
+            document.getElementsByName("email")[0].value = "abcd"+randomNumber+"@gmail.com";
+            document.getElementsByName("phone")[0].value = randomNumber;
           } else {
             document.getElementById('customer-form').style.display = "none";
+            document.getElementsByName("firstName")[0].value = "Guru";
+            document.getElementsByName("email")[0].value = "agent3@gmail.com";
+            document.getElementsByName("phone")[0].value = "3333333333";
           };
         };
       }
@@ -370,7 +379,7 @@
     tempParams.actionText = (typeof tempObj.actionText === 'undefined') ? "" : tempObj.actionText;
     tempParams.persistent = (typeof tempObj.persistent === 'undefined') ? false : tempObj.persistent;
     // Handlers initiation
-    tempParams.actionCallback = (typeof tempObj.actionCallback === 'undefined') ? _this.emptyFunction : tempObj.actionCallback;
+    tempParams.actionCallback = (typeof tempObj.actionCallback === 'undefined') ? function(){} : tempObj.actionCallback;
 
     if(typeof tempParams.actionCallback === "function") {
 

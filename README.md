@@ -8,14 +8,29 @@ A simple webrtc customer service care app using socket.io
 ```
 $ cd webrtc
 $ npm install
-$ npm start
+$ npm run liveServer / devServer
 ```
 
-And point your browser to `http://localhost:3000`. Optionally, specify
+## While launching 
+
+- As liveServer
+
+```
+$ sudo npm run liveServer 
+```
+
+This will make the server to run on default https port(443). 
+
+- As devServer
+```
+$ sudo npm run devServer 
+```
+
+And point your browser to `http://localhost:8080`. Optionally, specify
 a port by supplying the `PORT` env variable.
 
 ## Features
 
-- Customers can connect with the registred agents.
+- Customers can connect with the registerd agents.
 - Each and every agent will be registred with the portal along with their skills.
 - Customers can talk to the agents regarding the problems they are facing.

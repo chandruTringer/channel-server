@@ -1,104 +1,68 @@
-// Setup basic express server
-var fs = require('fs');
-var auth = require('http-auth');
-var https = require('https');
-var express = require('express');
-var socketIO = require('socket.io');
-var bodyParser = require('body-parser');
-var socketConnection = require('./server/socketConnection');
+var fs = require('fs'),
+    auth = require('http-auth'),
+    http = require('http');
+    https = require('https'),
+    express = require('express'),
+    socketIO = require('socket.io'),
+    bodyParser = require('body-parser'),
+    socketConnection = require('./server/socketConnection'),
+    userController = require('./controller/userController.js'),
 
-// Authentication module.
-var basic = auth.basic({
-	realm: "tringapps Inc.",
-	file: __dirname + "/htpasswd"
-});
+    // Authentication module.
+    basic = auth.basic({
+        realm: "tringapps Inc.",
+        file: __dirname + "/htpasswd"
+    }),
 
-// Setup basic express server
+    // Setup basic express server
 
-var app = express();
-var options = {
-  key: fs.readFileSync('./ssl/server.key'),
-  cert: fs.readFileSync('./ssl/server.crt')
-};
-// Application setup.
-app.use(auth.connect(basic));
-app.use(bodyParser.json());
-var server = https.createServer(options, app);
-var io = socketIO(server,{'pingInterval': 2000, 'pingTimeout': 30000});
+    app = express(),
+    options = {
+        key: fs.readFileSync('./ssl/server.key'),
+        cert: fs.readFileSync('./ssl/server.crt')
+    },
+    {server,port} = (() => {
+        if (process.argv.includes('--live')) {
+            app.use(auth.connect(basic));
+            return { 
+                server: https.createServer(options, app),
+                port: 443
+            };
+        } else {
+            return {
+                server: http.createServer(app),
+                port: 3000
+            };
+        }
+    })();
+    
+    var io = socketIO(server,{'pingInterval': 2000, 'pingTimeout': 30000});
 
-var port = 443;
+    server.listen(port, function () {
+        console.log(new Date()+' : Server listening at port %d', port);
+    });
 
-server.listen(port, function () {
-  console.log('Server listening at port %d', port);
-});
+    // Middlewares
+    app.use(express.static(__dirname + '/public'));
+	app.use(bodyParser.json());
 
-var User = require('./models/user.js');
+    try {
+        app.get('/_api/user/create/:_id', userController.createUser);
 
-
-// Routing
-app.use(express.static(__dirname + '/public'));
-
-try {
-	app.get('/_api/user/create/:_id', ( request, response ) => {
-		var id = request.params._id;
-		User.addUser({userId : id}, (err, successResponse) => {
-			console.log(err);
-			if(err){
-				throw err;
-			}
-			console.log(successResponse);
-			console.log("CREATED: "+id);
-			response.json(successResponse);
+        app.post('/_api/user/send_message', function(req, res){
+			userController.sendMessage(req, res, io);
 		});
-	});
 
-	app.post('/_api/user/send_message', ( request, response ) => {
-		var data = request.body;
-		User.findUserByUserId(data.sendTo, function(err, user){
+        app.head('/_api/network', function(req, res){
+            res.json({success: true});
+        })
 
-			if(err) throw err;
+        io.on('connection', socketConnection);
+    } catch(err) {
+        console.log(new Date()+" : "+err);
+    }
 
-			var addSuccessResponse = function(obj){
-				return {
-					success: true,
-					message: obj
-				};
-			};
-			var addFailureResponse = function(obj, cause){
-				return {
-					success: false,
-					message: obj,
-					cause: cause
-				};
-			};
-			if(user.length > 0){
-				console.log("IN SEND MESSAGE API",user[0].userId, data.type);
-				var user = user[0];
-				var userId = user.userId;
-				var sendTo = user.socketId;
-				var message = data.message;
-				var sockets = io.sockets;
-				if(sendTo && sockets.connected[sendTo]){
-					sockets.connected[sendTo].send(data);
-					response.json(addSuccessResponse(data));
-				} else {
-					console.log("Currently user not in connection");
-					response.json(addFailureResponse(data, "Currently user not in connection"));
-				}
-			} else {
-				console.log("Throw unknown user error");
-				response.json(addFailureResponse(data, "Unknow userId"));
-			}
-		});
-	});
-
-	io.on('connection', socketConnection);
-} catch(err) {
-	console.log(err);
-	throw err;
-}
-
-process.on('uncaughtException', function (err) {
-  console.log(err);
-	throw err;
-});
+    process.on('uncaughtException', function (err) {
+        console.log(new Date()+" : "+err);
+        throw err;
+    });

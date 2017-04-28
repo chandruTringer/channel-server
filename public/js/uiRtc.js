@@ -1,9 +1,16 @@
 window.candidateCount = 0;
+window.backOffStatus = [];
 window.addEventListener('load', function(e) {
-  window.addEventListener('online',  updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+  window.addEventListener('online',  onlineHandler);
+  window.addEventListener('offline', offlineHandler);
 	updateOnlineStatus(e);
+  fullScreenSetup();
 });
+
+function fullScreenSetup(){
+  document.body.requestFullScreen = document.body.webkitRequestFullScreen || document.body.mozRequestFullScreen || document.body.requestFullScreen;
+  document.cancelFullScreen = document.webkitCancelFullScreen || document.mozCancelFullScreen || document.cancelFullScreen;
+}
 
 function updateOnlineStatus(e) {
 	var condition = navigator.onLine ? "online" : "offline";
@@ -16,6 +23,106 @@ function updateOnlineStatus(e) {
 		setOnlineStatus(false);
 	}
 }
+
+function checkOnline(callback){
+  var server = rtc.hitServer('/_api/network');
+  server.head().then(function(data){
+    callback(data);
+  });
+}
+
+function onlineHandler(){
+  if(window.backOffTimerId && rtc.room.user && rtc.room.user.isBusyWith){
+    mze().makeToast({
+      textMessage: "Please wait we are reconnecting you call.",
+      position: "top-left"
+    });
+    clearTimeout(window.backOffTimerId);
+    console.log(window.backOffTimerId);
+  }
+  window.ONLINE = true;
+  setOnlineStatus(true,true);
+}
+
+function offlineHandler(){
+  window.ONLINE = false;
+  setOnlineStatus(false,true);
+}
+
+function updateOnlineIndicator(online){
+  var onlineIndicator = document.getElementById('icon-online');
+  if(online){
+    onlineIndicator.classList.add("online");
+  } else {
+    onlineIndicator.classList.remove("online");
+  }
+}
+
+function setOnlineStatus(status,enableReconnection){
+	if(status){
+    updateOnlineIndicator(true);
+    if(enableReconnection){
+      window.reconnectTimer = setTimeout(function(){
+        reconnectWithPeer();
+      },5000);
+    }
+	} else {
+    updateOnlineIndicator(false);
+		setBackoffStatus( new Date().getTime() );
+	}
+}
+
+function checkStatusAfterLastBackOff() {
+  if(rtc.room.user && rtc.room.user.isBusyWith){
+    console.log("Exceeded duration");
+    alert("Poor network, Please check your internet connection");
+    rtc.closeAllConnections(
+      null,
+      true
+    );
+    mze().makeToast({
+      textMessage: "Your call is being redirected",
+      position: "top-left"
+    });
+  } else {
+    console.log("User not in connection");
+  }
+}
+
+function setBackoffStatus(value){
+	window.backOffStatus.push(value);
+  mze().makeToast({
+    textMessage: "Please check your internet connection. We will try to reconnect, if we get internet within 32s",
+    position: "top-left"
+  });
+	window.backOffTimerId = setTimeout(function(){
+		checkStatusAfterLastBackOff();
+	},32000);
+	console.log(window.backOffTimerId);
+}
+
+function reconnectWithPeer(){
+  clearTimeout(window.reconnectTimer);
+  if(rtc.room.user && rtc.room.user.isBusyWith){
+    var videoDomSelector = "div-"+rtc.room.user.isBusyWith;
+    try{
+      videoDom = document.getElementById(videoDomSelector);
+      videoDom.parentNode.removeChild(videoDom);
+      rtc.room.connections = {};
+    } catch(e){
+      console.log(e.stack);
+    }
+    rtc.sendMessage({
+        type: "reconnect",
+        userId: rtc.room.user.userId,
+        firstName: rtc.room.user.firstName,
+        lastname: rtc.room.user.lastName,
+        email: rtc.room.user.email,
+        sendTo: rtc.room.user.isBusyWith
+    });
+  }
+}
+
 
 document.getElementById('chat-msg-box').disabled = true;
 
@@ -494,6 +601,8 @@ function reconnectWithPeer(){
   }
 }
 function setOnlineStatus(status){
+  //Temp
+  return;
 	var onlineIndicator = document.getElementById('icon-online');
 	if(status){
 		onlineIndicator.classList.add("online");
@@ -589,7 +698,7 @@ function updateScroll(){
 }
 
 function initiateCallHold(event) {
-  var tempText = document.querySelector("#modal-sample .dialog-title").innerText;
+  var tempText = "Your call is waiting with agent {{agentName}}";
   tempText = tempText.replace("{{agentName}}", event.detail.firstName);
   document.querySelector("#modal-sample .dialog-title").innerText = tempText;
 
@@ -616,9 +725,10 @@ function showIncomingCaller(message,ref){
 	  });
   };
 
-  setTimeout(function(){
+  var timer = setTimeout(function(){
     if(!hasAction){
       ref.afterCallDeclined(message);
+      clearTimeout(timer);
     }
   },60000)
 

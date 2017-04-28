@@ -1188,7 +1188,7 @@ Rtc.prototype.closeConnection = function(isAsync) {
 
         tempObj.currentConnections = 1;
       }
-      tempObj.afterClosingConnections.call(empty);
+      tempObj.eventHandlrs.afterClosingConnections.call(empty);
 };
 
 Rtc.prototype.closeAllConnections = function(isAsync, isTerminated) {
