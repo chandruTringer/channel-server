@@ -100,7 +100,6 @@ class dispatcher {
 
   _invokeCallback(payload){
     var _this = this;
-    console.log(_this);
     _this.isDispatching = true;
     mapObject(_this._reducers, function(key, value){
       value(payload);

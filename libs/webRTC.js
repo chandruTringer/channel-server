@@ -82,7 +82,6 @@ module.exports = class webRTC{
   doAnswerTo(remoteUserId){
     var tempObj = this;
     var currentUser = store.room.user;
-    var connections = currentUser.connections;
     currentUser.waiting = false;
     var doAnswerSuccess = function(e) {
       tempObj.setLocalAndSendMessage(e, currentUser.userId, remoteUserId);
@@ -100,8 +99,7 @@ module.exports = class webRTC{
 
   setLocalAndSendMessage(sessionDescription, userId, remoteUserId){
     var tempObj = this;
-    var currentUser = store.room.user;
-    var connections = currentUser.connections;
+    var connections = store.room.user.connections;
     var remotePeerConnection = connections[remoteUserId].peerConnection;
     var setLocalDescriptionSuccess = function() {
       tempObj.trace(
@@ -126,17 +124,15 @@ module.exports = class webRTC{
       description: sessionDescription,
       sendTo: remoteUserId,
       type: sessionDescription.type,
-      firstName: currentUser.firstName,
-      lastname: currentUser.lastName,
-      email: currentUser.email,
+      firstName: tempObj.room.user.firstName,
+      lastname: tempObj.room.user.lastName,
+      email: tempObj.room.user.email,
       userId: userId
     });
   }
 
   setRemote(message, remoteUserId){
     var tempObj = this;
-    var currentUser = store.room.user;
-    var connections = currentUser.connections;
     var setRemoteDescriptionSuccess = function(){
       tempObj.pushIceCandidates(remoteUserId);
       tempObj.currentConnections = tempObj.currentConnections + 1;
@@ -153,7 +149,7 @@ module.exports = class webRTC{
         "Setting remote description failed for user: " + remoteUserId
       );
     };
-    connections[remoteUserId].peerConnection.setRemoteDescription(
+    tempObj.room.user.connections[remoteUserId].peerConnection.setRemoteDescription(
       new RTCSessionDescription(message),
       setRemoteDescriptionSuccess,
       setRemoteDescriptionFailure
@@ -174,24 +170,23 @@ module.exports = class webRTC{
   ****************************************************************************/
   pushIceCandidates(userId){
     var tempObj = this;
-    var currentUser = store.room.user;
-    var connections = currentUser.connections;
-    if(!connections[userId].candidatesReceived) {
-      connections[userId].candidatesReceived = [];
+    if(!tempObj.room.user.connections[userId].candidatesReceived) {
+      tempObj.room.user.connections[userId].candidatesReceived = [];
     }
-    var lenIce = connections[userId].candidatesReceived.length;
+    var lenIce = tempObj.room.user.connections[userId].candidatesReceived.length;
     (function () {
       var keepLen = lenIce;
       for(var i = 0; i < keepLen; i++) {
-        var cmsg = connections[userId].candidatesReceived.pop();
+        var cmsg = tempObj.room.user.connections[userId].candidatesReceived.pop();
         var candidate = new RTCIceCandidate({
           sdpMLineIndex : cmsg.label,
           candidate : cmsg.candidate
         });
-        connections[userId].peerConnection.addIceCandidate(candidate);
+        tempObj.room.user.connections[userId].peerConnection.addIceCandidate(candidate);
       }
     })();
-    connections[userId].answered = true;
+    tempObj.room.user.connections[userId].answered = true;
+
   }
 
   onRemoteStreamAdded(event, userId){
@@ -216,15 +211,14 @@ module.exports = class webRTC{
 
   onIceCandidate(event){
     var tempObj = this;
-    var currentUser = store.room.user;
     if (event.candidate) {
       fluxiRTC.signaller.sendMessage( {
         type : 'candidate',
         label : event.candidate.sdpMLineIndex,
         id : event.candidate.sdpMid,
-        sendTo: currentUser.isBusyWith,
+        sendTo: store.room.user.isBusyWith,
         candidate : event.candidate.candidate,
-        userId: currentUser.userId
+        userId: store.room.user.userId
       });
     } else {
     }

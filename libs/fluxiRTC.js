@@ -8,11 +8,6 @@ var webRTCDataChannel = require('./webRTCDataChannel');
 var webRTC = require('./webRTC');
 var _fluxiRTCStore = require('./store/fluxiRTCStore');
 
-global.trace = function(text1, text2, text3) {
-  var now = (performance.now() / 1000).toFixed(3);
-  console.log(now + " : " + text1 + " : " + text2 + " : " + text3);
-};
-
 class fluxiRTC extends EventEmitter{
   constructor(){
     super();
@@ -21,6 +16,10 @@ class fluxiRTC extends EventEmitter{
     this.webRTCDataChannel = new webRTCDataChannel();
     this.webRTC = new webRTC();
     this.hitServer = hitServer;
+  }
+  trace(text1, text2, text3) {
+    var now = (performance.now() / 1000).toFixed(3);
+    console.log(now + " : " + text1 + " : " + text2 + " : " + text3);
   }
   startWebrtcSteps(){
     this.media.activateUserMedia();
@@ -150,7 +149,7 @@ class fluxiRTC extends EventEmitter{
                   storeRoom.user.previousConnectionsDetail.sendTo = responseData.callerDetails[0].userId;
                 }
               }
-              trace("Client", "Message", "User hosting chat room.");
+              tempObj.trace("Client", "Message", "User hosting chat room.");
               store.room = storeRoom;
               var userDetail = store.room.user;
               if(!roomData.userDetail.agent){
@@ -162,7 +161,7 @@ class fluxiRTC extends EventEmitter{
                   lastname: userDetail.lastName,
                   email: userDetail.email
                 });
-                  trace("Client", "Message", "In room message sent.");
+                  tempObj.trace("Client", "Message", "In room message sent.");
                 }
               }
 
@@ -178,15 +177,15 @@ class fluxiRTC extends EventEmitter{
 
               tempObj.startWebrtcSteps();
             } else {
-              trace("Server", "Error", "There seeems to be no room or user data in response.");
+              tempObj.trace("Server", "Error", "There seeems to be no room or user data in response.");
             }
           })
           .catch(function (responseData) {
-            trace("Server", "Error", "Room creation failed! Retry after sometime.");
+            tempObj.trace("Server", "Error", "Room creation failed! Retry after sometime.");
           });
         };
       } else {
-        trace("Client", "Warning", "There seems to be no form data. No connection will be established.");
+        tempObj.trace("Client", "Warning", "There seems to be no form data. No connection will be established.");
       }
 
       document.getElementById(store.videoToggleButton).onclick = (media.videoToggleHandler).bind(this);
@@ -203,37 +202,17 @@ class fluxiRTC extends EventEmitter{
         }
       };
       document.getElementById(store.hangupButton).onclick = function() {
-        var currentElement = this;
-        var isBusyWith = store.room.user.isBusyWith;
-        currentElement.classList.add("disabled");
-        if(store.room.user.agent && !!(store.room.user.isBusyWith)){
-          tempObj.signaller.sendMessage({
-            type: "terminate",
-            sendTo: isBusyWith,
-            info: "Your call was disconnected by the agent."
-          });
-          tempObj.deleteCurrentCustomer({
-            userId: isBusyWith,
-            firstName: store.room.user.connections[isBusyWith].firstName,
-            type: "bye"
-          });
-        } else {
-          // Flow for customer to closeConnections
-          if(tempObj.currentConnections > 1) {
-            tempObj.closeAllConnections();
-          } else {
-            tempObj.closeConnection();
-          }
-        }
-        setTimeout(function(){
-          currentElement.classList.remove("disabled");
-        },500);
 
+        if(store.currentConnections > 1) {
+          tempObj.closeAllConnections();
+        } else {
+          tempObj.closeConnection();
+        }
       };
 
     } catch(err) {
-      trace("Client", "Error", err);
-      trace("Client", "Error", "Execution stopped due to errors.");
+      tempObj.trace("Client", "Error", err);
+      tempObj.trace("Client", "Error", "Execution stopped due to errors.");
       return;
     }
 
@@ -260,10 +239,10 @@ class fluxiRTC extends EventEmitter{
           tempObj.hitServer(url, isAsync)
           .get(storeRoom.user.userId)
           .then(function () {
-            trace("Server", "Message", "User successfully deleted.");
+            tempObj.trace("Server", "Message", "User successfully deleted.");
           })
           .catch(function () {
-            trace("Server", "Error", "Delete user failed.");
+            tempObj.trace("Server", "Error", "Delete user failed.");
           });
 
           tempObj.currentConnections = 1;
@@ -302,13 +281,13 @@ class fluxiRTC extends EventEmitter{
           tempObj.hitServer(url, isAsync)
           .get(storeRoom.user.userId)
           .then(function () {
-            trace("Server", "Message", "User successfully deleted.");
+            tempObj.trace("Server", "Message", "User successfully deleted.");
 
             // Flow for switching to the next user in queue
 
           })
           .catch(function () {
-          trace("Server", "Error", "Delete user failed.");
+          tempObj.trace("Server", "Error", "Delete user failed.");
           });
 
           tempObj.currentConnections = 1;
@@ -324,7 +303,7 @@ class fluxiRTC extends EventEmitter{
     var isNewCustomer = (!currentUser.connections[tempMsg.userId] && isAgent);
     var isReconnection = (tempMsg.command === "reconnect" || tempMsg.type === "reconnect");
   	if(isNewCustomer || isReconnection) {
-          trace("Client", "Message", ("User in room: " + tempMsg.userId));
+          tempObj.trace("Client", "Message", ("User in room: " + tempMsg.userId));
           tempObj.webRTC.createPeerConnection(tempMsg, "offer");
           if(!currentUser.isBusyWith || isReconnection) {
                 tempObj.webRTCDataChannel.dataChannelCalls(currentUser.connections[tempMsg.userId].peerConnection, tempMsg.userId);
@@ -336,8 +315,8 @@ class fluxiRTC extends EventEmitter{
 
           }
     } else {
-        trace("Client","Message","Neglecting multiple inRoom message from server");
-        trace("Client","Message","Neglecting inRoom message to customer");
+        tempObj.trace("Client","Message","Neglecting multiple inRoom message from server");
+        tempObj.trace("Client","Message","Neglecting inRoom message to customer");
     }
 
     // Creating and setting an custom event
@@ -389,8 +368,8 @@ class fluxiRTC extends EventEmitter{
       var firstName = connections[userId].firstName;
       var type = tempMsg.type;
         if(responseData !== undefined){
-              trace("Server", "Message", "User successfully deleted.");
-              trace("Client", "Message", ("User in room: " + responseData));
+              tempObj.trace("Server", "Message", "User successfully deleted.");
+              tempObj.trace("Client", "Message", ("User in room: " + responseData));
 
 
               if(type == "bye"){
@@ -416,20 +395,20 @@ class fluxiRTC extends EventEmitter{
                 // Do nothing
                 // It means call was not picked by the agent
               } else {
-                fluxiRTC.store.currentConnections = fluxiRTC.store.currentConnections - 1;
+                tempObj.currentConnections = tempObj.currentConnections - 1;
 
                 tempObj.webRTCDataChannel.dataChannel[tempMsg.userId].close();
-                delete store.room.user.connections[tempMsg.userId];
-                delete store.webRTCDataChannel.dataChannel[tempMsg.userId];
+                delete tempObj.room.user.connections[tempMsg.userId];
+                delete tempObj.webRTCDataChannel.dataChannel[tempMsg.userId];
               }
-              if(!store.room.user.connections[responseData]){
+              if(!tempObj.room.user.connections[responseData]){
                 tempObj.sendMessage({
                   type: "connect",
                   userId: currentUser.userId,
                   sendTo: responseData
                 });
               } else {
-                tempObj.dataChannelCalls(store.room.user.connections[responseData].peerConnection, responseData);
+                tempObj.dataChannelCalls(tempObj.room.user.connections[responseData].peerConnection, responseData);
                 tempObj.webRTC.doCallTo(responseData);
                 connections[responseData].makeCall = true;
                 currentUser.isBusyWith = responseData;
@@ -447,15 +426,15 @@ class fluxiRTC extends EventEmitter{
               document.dispatchEvent(afterUserInRoom);
         } else {
               // Flow to remove the last customer
-              store.currentConnections = store.currentConnections - 1;
+              tempObj.currentConnections = tempObj.currentConnections - 1;
 
-              tempObj.webRTCDataChannel.dataChannel[tempMsg.userId].close();
-              delete store.room.user.connections[tempMsg.userId];
-              delete tempObj.webRTCDataChannel.dataChannel[tempMsg.userId];
+              tempObj.dataChannel[tempMsg.userId].close();
+              delete tempObj.room.user.connections[tempMsg.userId];
+              delete tempObj.dataChannel[tempMsg.userId];
 
               // Creating and setting an custom event
-              document.removeEventListener("afterRemoteLeaving", tempObj.eventHandlrs.afterRemoteLeaving);
-              document.addEventListener("afterRemoteLeaving", tempObj.eventHandlrs.afterRemoteLeaving);
+              document.removeEventListener("afterRemoteLeaving", tempObj.afterRemoteLeaving);
+              document.addEventListener("afterRemoteLeaving", tempObj.afterRemoteLeaving);
               var afterRemoteLeavingEvent = new CustomEvent("afterRemoteLeaving", {
                     detail: {
                           userId: userId,
@@ -478,15 +457,15 @@ class fluxiRTC extends EventEmitter{
     var currentUser = store.room.user;
   	currentUser.callStage = 0;
       currentUser.isBusyWith = null;
-      var url = store.apiBaseUrl + "user/remove/" + store.room.roomId + "/" + tempMsg.userId;
-      trace("Client", "Delete Request", store.room.roomId);
+      var url = tempObj.apiBaseUrl + "user/remove/" + store.room.roomId + "/" + tempMsg.userId;
+      tempObj.trace("Client", "Delete Request", store.room.roomId);
       tempObj.hitServer(url)
         .get(currentUser.userId)
         .then(function (responseData) {
         	tempObj.afterDeletingCurrentCustomer(tempMsg,responseData);
         })
         .catch(function () {
-            trace("Server", "Error", "Delete user failed.");
+            tempObj.trace("Server", "Error", "Delete user failed.");
         });
   }
 }

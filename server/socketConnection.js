@@ -104,7 +104,7 @@ module.exports = function (socket) {
       if(user.length > 0){
         var sendTo = user[0].socketId;
         var message = data.message;
-          console.log(new Date()+" :IN SEND MESSAGE",
+        console.log(new Date()+" :IN SEND MESSAGE",
             "Sending To: "+user[0].userId, 
             "Sent By: "+message.userId,
             "Type :"+message.type);

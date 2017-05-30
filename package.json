@@ -16,8 +16,6 @@
     "socket.io": "latest"
   },
   "scripts": {
-    "start": "node index.js",
-    "prestart": "webpack --config webpack.config.js",
     "liveServer": "node index.js --live",
     "devServer": "node index.js"
   }

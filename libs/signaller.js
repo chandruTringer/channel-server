@@ -16,13 +16,11 @@ module.exports = class signaller{
     var tempObj = this;
     var socket = io('/');
     socket.on('connect', function(){
+      tempObj.onChannelOpened.call(tempObj);
       socket.emit('addUser',{
         userId: store.room.user.userId,
         socketId: socket.id,
         channelToken: channelToken
-      },
-      function(){
-        tempObj.onChannelOpened.call(tempObj);
       });
       socket.on('message', function(message){
         tempObj.onChannelMessage.call(tempObj, message);

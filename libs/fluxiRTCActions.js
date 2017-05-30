@@ -63,23 +63,22 @@ module.exports = {
       window.OverlayObject && OverlayObject.hideOverlay();
     }
     fluxiRTC.showWaitingStatus(tempMsg, fluxiRTC);
-    trace("Client", "Message","Waiting for agent: "+tempMsg.firstName);
+    tempObj.trace("Client", "Message","Waiting for agent: "+tempMsg.firstName);
   },
   handleOffer: function handleOffer(tempMsg){
-    var tempObj = this;
-    var storeRoom = tempObj.appStore.room;
+    var storeRoom = this.appStore.room;
     if(document.getElementsByClassName("material-dialog").length > 0){
       document.getElementsByClassName("material-dialog")[0].style.display = "none";
     }
     storeRoom.user.callStage++; // Moving to offer received stage
-    trace("Client", "Message", ("Offer from user: " + tempMsg.userId));
-    fluxiRTC.webRTC.createPeerConnection(tempMsg, "answer");
+    tempObj.trace("Client", "Message", ("Offer from user: " + tempMsg.userId));
+    fluxiRTC.createPeerConnection(tempMsg, "answer");
     storeRoom.user.connections[tempMsg.userId].peerConnection.ondatachannel = function(event) {
       fluxiRTC.webRTCDataChannel.receiveChannel[tempMsg.userId] = event.channel;
-      fluxiRTC.webRTCDataChannel.createDataChannelHandlers(fluxiRTC.webRTCDataChannel.receiveChannel[tempMsg.userId]);
+      fluxiRTC.webRTCDataChannel.createDataChannelHandlers(tempObj.receiveChannel[tempMsg.userId]);
     };
-    fluxiRTC.webRTC.setRemote(tempMsg.description, tempMsg.userId);
-    fluxiRTC.webRTC.doAnswerTo(tempMsg.userId);
+    fluxiRTC.setRemote(tempMsg.description, tempMsg.userId);
+    fluxiRTC.doAnswerTo(tempMsg.userId);
     storeRoom.user.connections[tempMsg.userId].callAttendTime = new Date();
     storeRoom.user.isBusyWith = tempMsg.userId;
     storeRoom.user.callStage++; // Moving to answer sent stage
@@ -100,14 +99,14 @@ module.exports = {
   handleAnswer: function handleAnswer(tempMsg){
     var storeRoom = this.appStore.room;
     storeRoom.user.callStage++;
-    trace("Client", "Message", ("Answer from user: " + tempMsg.userId));
-    fluxiRTC.webRTC.setRemote(tempMsg.description, tempMsg.userId);
+    tempObj.trace("Client", "Message", ("Answer from user: " + tempMsg.userId));
+    fluxiRTC.setRemote(tempMsg.description, tempMsg.userId);
     storeRoom.user.connections[tempMsg.userId].connected = true;
     storeRoom.user.connections[tempMsg.userId].callAttendTime = new Date();
 
     // Creating and setting an custom event
-    document.removeEventListener("afterReceivingAnswer", fluxiRTC.eventHandlrs.afterReceivingAnswer);
-    document.addEventListener("afterReceivingAnswer", fluxiRTC.eventHandlrs.afterReceivingAnswer);
+    document.removeEventListener("afterReceivingAnswer", tempObj.afterReceivingAnswer);
+    document.addEventListener("afterReceivingAnswer", tempObj.afterReceivingAnswer);
     var afterReceivingAnswer = new CustomEvent("afterReceivingAnswer", {
       detail: {
         userId: tempMsg.userId,
@@ -145,8 +144,8 @@ module.exports = {
   handleAudioToggle: function handleAudioToggle(tempMsg){
     // Creating and setting an custom event
     var storeRoom = this.appStore.room;
-    document.removeEventListener("afterAudioToggle", fluxiRTC.eventHandlrs.afterAudioToggle);
-    document.addEventListener("afterAudioToggle", fluxiRTC.eventHandlrs.afterAudioToggle);
+    document.removeEventListener("afterAudioToggle", tempObj.afterAudioToggle);
+    document.addEventListener("afterAudioToggle", tempObj.afterAudioToggle);
     var afterAudioToggle = new CustomEvent("afterAudioToggle", {
       detail: {
         userId: tempMsg.userId,
@@ -160,8 +159,8 @@ module.exports = {
   handleVideoToggle: function handleVideoToggle(tempMsg){
     // Creating and setting an custom event
     var storeRoom = this.appStore.room;
-    document.removeEventListener("afterVideoToggle", fluxiRTC.eventHandlrs.afterVideoToggle);
-    document.addEventListener("afterVideoToggle", fluxiRTC.eventHandlrs.afterVideoToggle);
+    document.removeEventListener("afterVideoToggle", tempObj.afterVideoToggle);
+    document.addEventListener("afterVideoToggle", tempObj.afterVideoToggle);
     var afterVideoToggle = new CustomEvent("afterVideoToggle", {
       detail: {
         userId: tempMsg.userId,
@@ -230,7 +229,7 @@ module.exports = {
     }
   },
   handleTerminate: function handleTerminate(tempMsg){
-    fluxiRTC.closeAllConnections(
+    tempObj.closeAllConnections(
       null,
       true
     );

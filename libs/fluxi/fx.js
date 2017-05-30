@@ -158,11 +158,10 @@ var pObject = Object.prototype,
       if(!isFunction(arguments[1])) throw new TypeError();
       var callbackfn = arguments[1];
       // looping throught the properties in the object
-      var newObj = {};
       for( key in mappedObject ) {
-        newObj[key] = callbackfn.call( mappedObject, key, mappedObject[key] );
+        mappedObject[key] = callbackfn.call( mappedObject, key, mappedObject[key] );
       }
-      return newObj;
+      return mappedObject;
     };
 
      module.exports = {

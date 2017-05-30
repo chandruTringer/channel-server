@@ -636,3 +636,44 @@ span.decline {
     -moz-transition: opacity 0.3s ease-in;
     -o-transition: opacity 0.3s ease-in;
 }
+
+/* New Design styles */
+#after-login {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #333;
+    z-index: 999;
+    top: 0;
+}
+
+.left-layer {
+    width: 70px;
+    position: absolute;
+}
+
+.console-control-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.console-control{
+      margin: 10px;
+}
+
+#more-options{
+      color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+#contacts-options{
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+.console-control-list li{
+      display: inline-block;
+      line-height: 12px;
+      margin: 10px;
+}

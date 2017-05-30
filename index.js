@@ -31,7 +31,7 @@ var fs = require('fs'),
         } else {
             return {
                 server: http.createServer(app),
-                port: 3000
+                port: 8080
             };
         }
     })();
