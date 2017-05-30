@@ -31,6 +31,6 @@ a port by supplying the `PORT` env variable.
 
 ## Features
 
-- Customers can connect with the registerd agents.
-- Each and every agent will be registred with the portal along with their skills.
+- Customers can connect with the registered agents.
+- Each and every agent will be registered with the portal along with their skills.
 - Customers can talk to the agents regarding the problems they are facing.
