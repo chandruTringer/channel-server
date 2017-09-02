@@ -21,7 +21,7 @@
     "liveServer": "node index.js --live",
     "devServer": "node index.js",
     "test": "mocha --timeout 10000",
-    "start": "node index.js --live"
+    "start": "node index.js"
   },
   "devDependencies": {
     "chai": "^3.5.0",
