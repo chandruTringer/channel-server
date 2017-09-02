@@ -1,12 +1,11 @@
 
 # Socket.IO as Signaling server
 
-A simple webrtc customer service care app using socket.io
-
+A Channel Service application that make use of socket.io, express, mongoose for the course.
 ## How to use
 
 ```
-$ cd webrtc
+$ cd webrtc_ui
 $ npm install
 $ npm run liveServer / devServer
 ```
@@ -31,6 +30,6 @@ a port by supplying the `PORT` env variable.
 
 ## Features
 
-- Customers can connect with the registered agents.
-- Each and every agent will be registered with the portal along with their skills.
+- Customers can connect with the registerd agents.
+- Each and every agent will be registred with the portal along with their skills.
 - Customers can talk to the agents regarding the problems they are facing.

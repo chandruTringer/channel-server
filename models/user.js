@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-
-// Create a token generator with the default settings:
-const generateToken = require('rand-token');
+var moment = require('moment');
+var now = () => moment().utcOffset(330).format();
+const Rx = require('rxjs');
 
 // Constant values which are all used globally in other locations
 
@@ -17,15 +17,8 @@ var URI = `mongodb://${USER}:${PASS}@${HOST}:${PORT}`;
 var connection = mongoose.connect(`${URI}/admin`);
 
 // Generate a 16 character alpha-numeric token:
-const createToken = () => generateToken.generate(20);
 
 var EMPTY_VALUE = "@EMPTY_VALUE";
-
-// Add channel token
-const addChannelToken = function(user){
-  user = Object.assign({channelToken: createToken(), socketId: EMPTY_VALUE},user);
-  return user;
-};
 
 const userSchema = mongoose.Schema({
   userId: {
@@ -39,6 +32,11 @@ const userSchema = mongoose.Schema({
   socketId: {
     type: String,
     required: true
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 },
 {
@@ -47,38 +45,64 @@ const userSchema = mongoose.Schema({
 
 // Static methods that aids in workflow
 
-userSchema.statics.findUserByUserId = function(userId, callback){
-  return this.find({userId: userId}, callback);
-};
-
-userSchema.statics.findUserIdBySocketId = function(socketId, callback){
-  return this.find({socketId: socketId}, callback);
-}
-
-userSchema.statics.removeUserByUserId = function(userId, callback){
-  return this.remove({userId: userId}, callback);
-};
-
-userSchema.statics.updateUser = function(userId, updatedContent, options, callback){
-  return this.findOneAndUpdate({userId: userId}, updatedContent, options, callback);
-}
-
-const User = module.exports = mongoose.model("User", userSchema);
-
-
-const addUser = (user, callback) => {
-    User.findUserByUserId(user.userId, function(err, users){
-      if(err) throw err;
-      if(users.length > 0){
-        console.log(new Date()+" :UserId Already Exists", users);
-        User.removeUserByUserId(user.userId, function(err, users){
-          User.create(addChannelToken(user),callback);
+userSchema.statics.findUserByUserId = (userId) => {
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+        User.find({userId}, (err, data) => {
+            if(err) reject(err);
+            return done(data);
         });
-      } else {
-        console.log(new Date()+" :New UserId");
-        User.create(addChannelToken(user),callback);
-      }
-    });
-};
+      })
+    );
+}
 
-module.exports.addUser = addUser;
+userSchema.statics.updateUserBySocketId = function(socketId, updatedContent, options){
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+      User.findOneAndUpdate({"socketId": socketId}, updatedContent, options, (err, data) => {
+            if(err) reject(err);
+            return done(data);
+        });
+      })
+    );
+}
+
+userSchema.statics.findUserByChannelToken = function(channelToken){
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+      User.find({channelToken}, (err, data) => {
+            if(err) reject(err);
+            return done(data);
+        });
+      })
+    );
+}
+
+userSchema.statics.removeUserByUserId = function(userId){
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+      User.remove({userId}, (err, data) => {
+            if(err) reject(err);
+            return done(data);
+        });
+      })
+    );
+}
+
+
+userSchema.statics.removeUserByChannelToken = function(channelToken){
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+      User.remove({channelToken}, (err, data) => {
+            if(err) reject(err);
+            return done(data);
+        });
+      })
+    );
+}
+
+userSchema.statics.updateUser = function(channelToken, updatedContent, options){
+    return Rx.Observable.fromPromise(new Promise((done, reject) => {
+      User.findOneAndUpdate({"channelToken": channelToken}, updatedContent, options, (err, data) => {
+            if(err) reject(err);
+            return done(data);
+        });
+      })
+    );
+}
+const User = module.exports = mongoose.model("User", userSchema);
