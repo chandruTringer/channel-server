@@ -31,7 +31,7 @@ var fs = require('fs'),
         } else {
             return {
                 server: http.createServer(app),
-                port: process.evn.PORT || 8080
+                port: process.env.PORT || 8080
             };
         }
     })();
