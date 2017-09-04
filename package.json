@@ -1,9 +1,9 @@
 {
-  "name": "intellignet-call-router",
+  "name": "handlr-channel",
   "version": "0.0.0",
-  "description": "A simple webrtc customer service care app using socket.io",
+  "description": "A simple webrhttps://github.com/chandruTringer/channel-server/settingstc customer service care app using socket.io",
   "main": "index.js",
-  "author": "Vigneshwaran Sivasamy",
+  "author": "webteam",
   "private": true,
   "license": "BSD",
   "dependencies": {
