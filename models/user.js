@@ -6,8 +6,8 @@ const Rx = require('rxjs');
 // Constant values which are all used globally in other locations
 
 var USER = 'root';
-var PASS = 'high5';
-var HOST = '104.155.137.246';
+var PASS = 'handlwithease';
+var HOST = '104.198.196.76';
 var PORT = '27017';
 
 var URI = `mongodb://${USER}:${PASS}@${HOST}:${PORT}`;
