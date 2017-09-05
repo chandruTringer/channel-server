@@ -103,11 +103,13 @@ const deleteUser = ( request, response, io ) => {
 const sendToSocket = (sendTo, data, io) => {
     var sockets = io.sockets;
     if(sendTo && sockets.connected[sendTo]){
+console.log(sendTo);
         sockets.connected[sendTo].send(data.message);
         return true;
     } else {
+	console.log(":SCOCKET FAILED :"+sockets.connected[sendTo])
         console.log(now()+" : Failed socket : "+sendTo);
-        return false;
+       return true;
     }
 };
 
