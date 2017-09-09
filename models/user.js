@@ -55,9 +55,9 @@ userSchema.statics.findUserByUserId = (userId) => {
     );
 }
 
-userSchema.statics.updateUserBySocketId = function(socketId, updatedContent, options){
+userSchema.statics.removeUserBySocketId = function(socketId, updatedContent, options){
     return Rx.Observable.fromPromise(new Promise((done, reject) => {
-      User.findOneAndUpdate({"socketId": socketId}, updatedContent, options, (err, data) => {
+            User.remove({"socketId": socketId},(err, data) => {
             if(err) reject(err);
             return done(data);
         });
@@ -84,6 +84,7 @@ userSchema.statics.removeUserByUserId = function(userId){
       })
     );
 }
+
 
 
 userSchema.statics.removeUserByChannelToken = function(channelToken){

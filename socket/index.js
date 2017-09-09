@@ -30,7 +30,7 @@ const onDisconnect = (data, socket) => {
   var _this = this;
   var socketId = socket.id;
   console.log("socketId", socket.id);
-  User.updateUserBySocketId(socketId,{active: false},{"returnNewDocument": true})
+  User.removeUserBySocketId(socketId)
     .subscribe(
       (successResponse) => {
         if(successResponse){
