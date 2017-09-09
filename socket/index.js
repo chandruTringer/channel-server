@@ -34,8 +34,8 @@ const onDisconnect = (data, socket) => {
     .subscribe(
       (successResponse) => {
         if(successResponse){
-          console.log(now()+" : Updated User status: "+successResponse.channelToken);
-          makeDisconnectRequest(successResponse.userId, successResponse.channelToken);
+          console.log(now()+" : Removed User by socketID: "+socketId);
+        //  makeDisconnectRequest(successResponse.userId, successResponse.channelToken);
         }
       },
       (err) => console.log(err)
